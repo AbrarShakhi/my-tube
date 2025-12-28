@@ -5,6 +5,5 @@ import com.github.abrarshakhi.mytube.domain.usecase.result.Outcome
 
 interface ChannelRepository {
     suspend fun getChannels(): Outcome<List<Channel>>
-    suspend fun addChannel(channel: Channel): Outcome<String>
-    suspend fun findChannel(channelId: String): Outcome<Channel>
+    suspend fun addChannel(handle: String): Outcome<String>
 }

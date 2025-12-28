@@ -1,24 +1,18 @@
 package com.github.abrarshakhi.mytube.presentation
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.github.abrarshakhi.mytube.presentation.home.HomeScreen
-import com.github.abrarshakhi.mytube.ui.theme.MyTubeTheme
-import dagger.hilt.android.AndroidEntryPoint
+import com.github.abrarshakhi.mytube.presentation.ui.theme.MyTubeTheme
 
-@AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class VideoActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        startActivity(Intent())
         setContent {
-            MyTubeTheme {
-                HomeScreen()
-            }
+            MyTubeTheme {}
         }
     }
 }
+

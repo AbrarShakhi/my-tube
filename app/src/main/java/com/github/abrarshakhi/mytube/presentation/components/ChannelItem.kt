@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -21,10 +22,11 @@ import com.github.abrarshakhi.mytube.domain.model.Channel
 
 
 @Composable
-fun ChannelItem(channel: Channel) {
+fun ChannelItem(channel: Channel, onClick: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth().padding(8.dp),
-        elevation = CardDefaults.cardElevation(14.dp)
+        elevation = CardDefaults.cardElevation(14.dp),
+        onClick = onClick
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = CenterVertically) {
@@ -33,18 +35,17 @@ fun ChannelItem(channel: Channel) {
                         modifier = Modifier
                             .padding(end = 8.dp)
                             .size(10.dp)
-                            .background(
-                                Color.Red,
-                                shape = androidx.compose.foundation.shape.CircleShape
-                            )
+                            .background(Color.Red, shape = CircleShape)
                     )
                 }
                 Text(
-                    text = channel.name, style = MaterialTheme.typography.titleLarge
+                    text = channel.name,
+                    style = MaterialTheme.typography.titleLarge
                 )
             }
             Text(
-                text = channel.lastUploaded, style = MaterialTheme.typography.bodyMedium
+                text = channel.lastUploadedSince,
+                style = MaterialTheme.typography.bodyMedium
             )
         }
     }
@@ -59,8 +60,9 @@ fun ChannelItemPreview() {
                 channelId = "",
                 name = "GoodTimesWithScar",
                 hasNewUpload = true,
-                lastUploaded = "32 minutes ago"
-            )
+                lastUploadedSince = "32 minutes ago"
+            ),
+            {}
         )
     }
 }

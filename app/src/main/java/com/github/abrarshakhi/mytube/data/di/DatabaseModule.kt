@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.github.abrarshakhi.mytube.data.local.AppDatabase
 import com.github.abrarshakhi.mytube.data.local.dao.ChannelDao
+import com.github.abrarshakhi.mytube.data.local.dao.ChannelFilterDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,4 +31,9 @@ object DatabaseModule {
     fun provideChannelDao(
         database: AppDatabase
     ): ChannelDao = database.channelDao()
+
+    @Provides
+    fun provideChannelFilterDao(
+        database: AppDatabase
+    ): ChannelFilterDao = database.channelFilterDao()
 }

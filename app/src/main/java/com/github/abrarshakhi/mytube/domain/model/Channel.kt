@@ -4,5 +4,5 @@ data class Channel(
     val channelId: String,
     val name: String,
     val hasNewUpload: Boolean,
-    val lastUploaded: String
+    val lastUploadedSince: String
 )

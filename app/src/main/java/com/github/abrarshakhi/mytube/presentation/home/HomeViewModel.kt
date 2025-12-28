@@ -49,13 +49,13 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun addChannel(channelId: String) {
+    fun addChannel(handle: String) {
         viewModelScope.launch {
             _channelAddState.update {
                 it.copy(isLoading = true, error = null)
             }
 
-            when (val result = addChannelUseCase(channelId)) {
+            when (val result = addChannelUseCase(handle)) {
                 is Outcome.Success -> {
                     _channelAddState.value = ChannelAddingUiState(
                         isSuccess = true,

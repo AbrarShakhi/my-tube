@@ -4,7 +4,9 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import com.github.abrarshakhi.mytube.data.local.entity.ChannelEntity
+import com.github.abrarshakhi.mytube.data.local.relation.ChannelWithFilter
 
 @Dao
 interface ChannelDao {
@@ -17,5 +19,7 @@ interface ChannelDao {
     @Query("SELECT * FROM channels")
     suspend fun getChannels(): List<ChannelEntity>
 
-
+    @Transaction
+    @Query("SELECT * FROM channels")
+    suspend fun getChannelsWithFilter(): List<ChannelWithFilter>
 }

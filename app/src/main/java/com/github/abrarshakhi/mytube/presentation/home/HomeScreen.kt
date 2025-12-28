@@ -1,19 +1,20 @@
 package com.github.abrarshakhi.mytube.presentation.home
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -25,11 +26,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.abrarshakhi.mytube.domain.model.Channel
+import com.github.abrarshakhi.mytube.presentation.VideoActivity
 import com.github.abrarshakhi.mytube.presentation.components.ChannelItem
 import com.github.abrarshakhi.mytube.ui.theme.MyTubeTheme
 
@@ -92,12 +94,8 @@ fun HomeScreen(
     if (showDialog) {
         AddChannelDialog(
             isLoading = channelAddState.isLoading,
-            onDismiss = {
-                showDialog = false
-            },
-            onAdd = { channelId ->
-                viewModel.addChannel(channelId)
-            }
+            onDismiss = { showDialog = false },
+            onAdd = { handle -> viewModel.addChannel(handle) }
         )
     }
 }
@@ -109,7 +107,7 @@ fun AddChannelDialog(
     onDismiss: () -> Unit,
     onAdd: (String) -> Unit
 ) {
-    var channelId by remember { mutableStateOf("") }
+    var handle by remember { mutableStateOf("@") }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -117,16 +115,16 @@ fun AddChannelDialog(
         text = {
             Column {
                 OutlinedTextField(
-                    value = channelId,
-                    onValueChange = { channelId = it },
-                    label = { Text("Channel ID") }
+                    value = handle,
+                    onValueChange = { handle = it },
+                    label = { Text("@ Channel Handle") },
                 )
             }
         },
         confirmButton = {
             TextButton(
                 enabled = !isLoading,
-                onClick = { onAdd(channelId) }) {
+                onClick = { onAdd(handle) }) {
                 Text("Add")
             }
         },
@@ -166,9 +164,12 @@ fun ChannelList(
     channels: List<Channel>,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     LazyColumn(modifier = modifier) {
         items(channels) { channel ->
-            ChannelItem(channel)
+            ChannelItem(channel) {
+                context.startActivity(Intent(context, VideoActivity::class.java))
+            }
         }
     }
 }

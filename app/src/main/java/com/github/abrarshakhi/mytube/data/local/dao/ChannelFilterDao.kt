@@ -12,9 +12,6 @@ interface ChannelFilterDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFilter(filter: ChannelFilterEntity)
 
-    @Query("SELECT * FROM channels_filter WHERE id = :channelId")
-    suspend fun getFilter(channelId: Long): ChannelFilterEntity?
-
-    @Query("DELETE FROM channels_filter WHERE id = :channelId")
-    suspend fun deleteFilter(channelId: Long)
+    @Query("SELECT * FROM channels_filter WHERE id = :id")
+    suspend fun getFilter(id: Long): ChannelFilterEntity?
 }

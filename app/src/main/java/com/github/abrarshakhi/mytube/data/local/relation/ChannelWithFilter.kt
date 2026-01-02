@@ -13,5 +13,5 @@ data class ChannelWithFilter(
         parentColumn = "id",
         entityColumn = "id"
     )
-    val filter: ChannelFilterEntity?
+    val filter: ChannelFilterEntity
 )

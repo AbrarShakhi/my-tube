@@ -1,4 +1,4 @@
-package com.github.abrarshakhi.mytube.data.di
+package com.github.abrarshakhi.mytube.di
 
 import com.github.abrarshakhi.mytube.data.repository.ChannelRepositoryImpl
 import com.github.abrarshakhi.mytube.domain.repository.ChannelRepository
@@ -14,7 +14,6 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindChannelRepository(
-        impl: ChannelRepositoryImpl
-    ): ChannelRepository
+    abstract fun bindChannelRepository(impl: ChannelRepositoryImpl)
+            : ChannelRepository
 }

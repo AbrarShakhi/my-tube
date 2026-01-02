@@ -1,4 +1,4 @@
-package com.github.abrarshakhi.mytube.data.di
+package com.github.abrarshakhi.mytube.di
 
 import com.github.abrarshakhi.mytube.data.remote.api.ChannelApi
 import dagger.Module
@@ -37,8 +37,6 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideChannelApi(
-        retrofit: Retrofit
-    ): ChannelApi =
-        retrofit.create(ChannelApi::class.java)
+    fun provideChannelApi(retrofit: Retrofit)
+            : ChannelApi = retrofit.create(ChannelApi::class.java)
 }

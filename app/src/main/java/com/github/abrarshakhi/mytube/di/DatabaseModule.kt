@@ -1,10 +1,11 @@
-package com.github.abrarshakhi.mytube.data.di
+package com.github.abrarshakhi.mytube.di
 
 import android.content.Context
 import androidx.room.Room
 import com.github.abrarshakhi.mytube.data.local.AppDatabase
 import com.github.abrarshakhi.mytube.data.local.dao.ChannelDao
 import com.github.abrarshakhi.mytube.data.local.dao.ChannelFilterDao
+import com.github.abrarshakhi.mytube.data.local.datasource.ChannelWithFilterDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,12 +29,16 @@ object DatabaseModule {
         ).build()
 
     @Provides
-    fun provideChannelDao(
-        database: AppDatabase
-    ): ChannelDao = database.channelDao()
+    fun provideChannelDao(database: AppDatabase)
+            : ChannelDao = database.channelDao()
 
     @Provides
-    fun provideChannelFilterDao(
-        database: AppDatabase
-    ): ChannelFilterDao = database.channelFilterDao()
+    fun provideChannelFilterDao(database: AppDatabase)
+            : ChannelFilterDao = database.channelFilterDao()
+
+    @Provides
+    fun provideChannelDataSource(
+        channelDao: ChannelDao,
+        channelFilterDao: ChannelFilterDao
+    ): ChannelWithFilterDataSource = ChannelWithFilterDataSource(channelDao, channelFilterDao)
 }

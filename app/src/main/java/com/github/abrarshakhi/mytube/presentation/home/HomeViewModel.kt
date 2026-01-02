@@ -4,7 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.abrarshakhi.mytube.domain.usecase.AddChannelUseCase
 import com.github.abrarshakhi.mytube.domain.usecase.GetChannelsUseCase
-import com.github.abrarshakhi.mytube.domain.usecase.result.Outcome
+import com.github.abrarshakhi.mytube.presentation.home.state.ChannelListState
+import com.github.abrarshakhi.mytube.presentation.home.state.SheetState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,59 +19,30 @@ class HomeViewModel @Inject constructor(
     private val addChannelUseCase: AddChannelUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(HomeUiState())
-    val uiState = _uiState.asStateFlow()
+    private val _sheetState = MutableStateFlow<SheetState>(SheetState.Hidden)
+    val sheetState = _sheetState.asStateFlow()
+    fun showSheet() {
+        _sheetState.update { SheetState.Visible }
+    }
 
-    private val _channelAddState = MutableStateFlow(ChannelAddingUiState())
-    val channelAddState = _channelAddState.asStateFlow()
+    fun defaultSheet() {
+        _sheetState.update { SheetState.Hidden }
+    }
+
+    private val _channelListState = MutableStateFlow<ChannelListState>(ChannelListState.Loading)
+    val channelListState = _channelListState.asStateFlow()
 
     init {
         loadChannels()
     }
 
-    private fun loadChannels() {
+    fun loadChannels() {
+        _channelListState.update { ChannelListState.Loading }
         viewModelScope.launch {
-            _uiState.update {
-                it.copy(isLoading = true, error = null)
-            }
-
-            _uiState.value = when (val result = getChannelsUseCase()) {
-                is Outcome.Success -> HomeUiState(
-                    channels = result.value,
-                    isLoading = false
-                )
-
-                is Outcome.Failure -> HomeUiState(
-                    channels = emptyList(),
-                    isLoading = false,
-                    error = result.error.message()
-                )
-            }
-        }
-    }
-
-    fun addChannel(handle: String) {
-        viewModelScope.launch {
-            _channelAddState.update {
-                it.copy(isLoading = true, error = null)
-            }
-
-            when (val result = addChannelUseCase(handle)) {
-                is Outcome.Success -> {
-                    _channelAddState.value = ChannelAddingUiState(
-                        isSuccess = true,
-                        isLoading = false
-                    )
-                    loadChannels()
-                }
-
-                is Outcome.Failure -> {
-                    _channelAddState.value = ChannelAddingUiState(
-                        isSuccess = false,
-                        isLoading = false,
-                        error = result.error.message()
-                    )
-                }
+            getChannelsUseCase().onSuccess { channels ->
+                _channelListState.update { ChannelListState.Success(channels) }
+            }.onFailure { throwable ->
+                _channelListState.update { ChannelListState.Error(throwable.message) }
             }
         }
     }

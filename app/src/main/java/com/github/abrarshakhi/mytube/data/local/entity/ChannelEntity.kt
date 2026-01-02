@@ -13,6 +13,6 @@ data class ChannelEntity(
     val id: Long = 0L,
     val channelId: String,
     val name: String,
-    val hasNewUpload: Boolean,
-    val lastUploadedAt: Long?
+    val hasNewUpload: Boolean = false,
+    val lastUploadedAt: Long? = null
 )

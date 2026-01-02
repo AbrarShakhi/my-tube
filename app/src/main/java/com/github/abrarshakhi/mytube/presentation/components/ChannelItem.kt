@@ -50,19 +50,3 @@ fun ChannelItem(channel: Channel, onClick: () -> Unit) {
         }
     }
 }
-
-@Preview(showBackground = false)
-@Composable
-fun ChannelItemPreview() {
-    MaterialTheme {
-        ChannelItem(
-            Channel(
-                channelId = "",
-                name = "GoodTimesWithScar",
-                hasNewUpload = true,
-                lastUploadedSince = "32 minutes ago"
-            ),
-            {}
-        )
-    }
-}

@@ -11,7 +11,7 @@ import com.github.abrarshakhi.mytube.data.local.relation.ChannelWithFilter
 @Dao
 interface ChannelDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertChannel(channel: ChannelEntity)
+    suspend fun insertChannel(channel: ChannelEntity): Long
 
     @Query("SELECT * FROM channels WHERE channelId = :channelId LIMIT 1")
     suspend fun getChannel(channelId: String): ChannelEntity?
@@ -19,7 +19,16 @@ interface ChannelDao {
     @Query("SELECT * FROM channels")
     suspend fun getChannels(): List<ChannelEntity>
 
+    @Query("DELETE FROM channels WHERE channelId = :channelId")
+    suspend fun deleteChannel(channelId: String)
+
+    @Throws(IllegalStateException::class)
     @Transaction
     @Query("SELECT * FROM channels")
-    suspend fun getChannelsWithFilter(): List<ChannelWithFilter>
+    suspend fun getChannelsWithFilters(): List<ChannelWithFilter>
+
+    @Throws(IllegalStateException::class)
+    @Transaction
+    @Query("SELECT * FROM channels WHERE channelId = :channelId")
+    suspend fun getChannelsWithFilter(channelId: String): ChannelWithFilter?
 }

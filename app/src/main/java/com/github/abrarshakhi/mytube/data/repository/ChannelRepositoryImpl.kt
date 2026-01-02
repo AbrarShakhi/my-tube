@@ -18,11 +18,13 @@ class ChannelRepositoryImpl @Inject constructor(
 ) : ChannelRepository {
 
     override suspend fun getChannels(): Result<List<Channel>> {
-        TODO()
+        return Result.success(channelDataSource.getAll().map {
+            it.toDomain()
+        })
     }
 
     override suspend fun addChannel(handle: String): Result<String> {
-        TODO()
+        return Result.failure(NotImplementedError("addChannel not implemented"))
     }
 
     override suspend fun findChannel(handle: String): Result<Channel> {

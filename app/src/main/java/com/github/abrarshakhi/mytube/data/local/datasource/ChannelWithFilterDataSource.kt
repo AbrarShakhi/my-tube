@@ -24,10 +24,10 @@ class ChannelWithFilterDataSource(
         channelDao.deleteChannel(channelId)
     }
 
-    suspend fun getList(): List<ChannelWithFilter> {
+    suspend fun getAll(): List<ChannelWithFilter> {
         return try {
             channelDao.getChannelsWithFilters()
-        } catch (e: IllegalStateException) {
+        } catch (_: IllegalStateException) {
             emptyList()
         }
     }

@@ -1,6 +1,8 @@
 package com.github.abrarshakhi.mytube.presentation.home
 
 import android.content.Intent
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,11 +18,18 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.abrarshakhi.mytube.presentation.VideoActivity
+import com.github.abrarshakhi.mytube.presentation.components.AddChannelContent
+import com.github.abrarshakhi.mytube.presentation.components.AddFilterContent
 import com.github.abrarshakhi.mytube.presentation.components.ChannelItem
 import com.github.abrarshakhi.mytube.presentation.components.ErrorContent
 import com.github.abrarshakhi.mytube.presentation.components.LoadingContent
@@ -39,46 +48,62 @@ fun HomeScreen(
 
     val channelListStateUi = viewModel.channelListState.collectAsState()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(title = { Text("MyTube") })
-        },
-        floatingActionButton = {
-            FloatingActionButton(onClick = { viewModel.showSheet() }) {
-                Icon(Icons.Default.Add, contentDescription = "Add Channel")
-            }
+    val addChannelStateUi = viewModel.addChannelState.collectAsState()
+
+    Scaffold(topBar = {
+        TopAppBar(title = { Text("MyTube") })
+    }, floatingActionButton = {
+        FloatingActionButton(onClick = { viewModel.showSheet() }) {
+            Icon(Icons.Default.Add, contentDescription = "Add Channel")
         }
-    ) { paddingValues ->
+    }) { paddingValues ->
+        val context = LocalContext.current
         when (channelListStateUi.value) {
             is ChannelListState.Loading -> LoadingContent(
-                Modifier.padding(paddingValues)
+                Modifier.padding(paddingValues).fillMaxSize()
             )
 
             is ChannelListState.Error -> ErrorContent(
-                Modifier.padding(paddingValues),
-                (channelListStateUi.value as ChannelListState.Error).message
-                    ?: "Unknown Error Occurred"
+                (channelListStateUi.value as ChannelListState.Error).message,
+                Modifier.padding(paddingValues)
             )
 
-            is ChannelListState.Success -> {
-                val context = LocalContext.current
+            is ChannelListState.Success ->
                 LazyColumn(Modifier.padding(paddingValues)) {
                     items((channelListStateUi.value as ChannelListState.Success).channels) {
                         ChannelItem(channel = it, onClick = {
                             context.startActivity(Intent(context, VideoActivity::class.java))
+                        }, onLongClick = {
                         })
                     }
                 }
-            }
         }
     }
 
-    if (sheetStateUi.value is SheetState.Visible) {
-        ModalBottomSheet(
-            onDismissRequest = { viewModel.defaultSheet() },
-            modifier = Modifier,
-            sheetState = sheetState
-        ) {
+    if (sheetStateUi.value is SheetState.Hidden) {
+        return
+    }
+
+    ModalBottomSheet(
+        onDismissRequest = { viewModel.defaultSheet() },
+        modifier = Modifier.padding(17.dp),
+        sheetState = sheetState
+    ) {
+        var handle by remember { mutableStateOf("@") }
+        var filter by remember { mutableStateOf("") }
+        Column {
+            AddChannelContent(
+                handle = handle,
+                onTextFieldValueChange = { handle = it },
+                onButtonClick = { viewModel.findChannel(handle) },
+                addChannelState = addChannelStateUi.value
+            )
+            AddFilterContent(
+                filter = filter,
+                onTextFieldValueChange = { filter = it },
+                onButtonClick = { },
+            )
         }
     }
 }
+

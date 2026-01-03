@@ -7,10 +7,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun ErrorContent(modifier: Modifier, errorMessage: String) {
+fun ErrorContent(text: String, modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         Text(
-            text = errorMessage,
+            text = text,
             color = MaterialTheme.colorScheme.error
         )
     }

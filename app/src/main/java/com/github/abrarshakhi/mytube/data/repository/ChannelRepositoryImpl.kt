@@ -23,7 +23,7 @@ class ChannelRepositoryImpl @Inject constructor(
         })
     }
 
-    override suspend fun addChannel(handle: String): Result<String> {
+    override suspend fun addChannel(channel: Result<Channel>): Result<String> {
         return Result.failure(NotImplementedError("addChannel not implemented"))
     }
 

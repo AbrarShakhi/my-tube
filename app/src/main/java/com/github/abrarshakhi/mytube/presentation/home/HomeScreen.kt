@@ -86,7 +86,6 @@ fun HomeScreen(
 
     ModalBottomSheet(
         onDismissRequest = { viewModel.defaultSheet() },
-        modifier = Modifier.padding(17.dp),
         sheetState = sheetState
     ) {
         var handle by remember { mutableStateOf("@") }

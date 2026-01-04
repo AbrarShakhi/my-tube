@@ -3,6 +3,7 @@ package com.github.abrarshakhi.mytube.data.repository
 import com.github.abrarshakhi.mytube.BuildConfig
 import com.github.abrarshakhi.mytube.data.local.datasource.ChannelWithFilterDataSource
 import com.github.abrarshakhi.mytube.data.mapper.toDomain
+import com.github.abrarshakhi.mytube.data.mapper.toRelation
 import com.github.abrarshakhi.mytube.data.remote.api.ChannelApi
 import com.github.abrarshakhi.mytube.domain.model.Channel
 import com.github.abrarshakhi.mytube.domain.repository.ChannelRepository
@@ -24,7 +25,15 @@ class ChannelRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addChannel(channel: Channel): Result<String> {
-        return Result.failure(NotImplementedError("addChannel not implemented"))
+        try {
+            channelDataSource.insert(channel.toRelation())
+            val channelFilter = channelDataSource.get(channel.channelId) ?: return Result.failure(
+                Exception("Unable to save channel")
+            )
+            return Result.success(channelFilter.channel.channelId)
+        } catch (e: Exception) {
+            return Result.failure(e)
+        }
     }
 
     override suspend fun findChannel(handle: String): Result<Channel> {

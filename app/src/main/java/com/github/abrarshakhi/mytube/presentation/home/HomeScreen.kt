@@ -49,19 +49,19 @@ fun HomeScreen(
         }
     }) { paddingValues ->
         val context = LocalContext.current
-        when (channelListState) {
+        when (val state = channelListState) {
             is ChannelListState.Loading -> LoadingContent(
                 Modifier.padding(paddingValues).fillMaxSize()
             )
 
             is ChannelListState.Error -> ErrorContent(
-                (channelListState as ChannelListState.Error).message,
+                state.message,
                 Modifier.padding(paddingValues)
             )
 
             is ChannelListState.Success ->
                 LazyColumn(Modifier.padding(paddingValues)) {
-                    items((channelListState as ChannelListState.Success).channels) { channel ->
+                    items(state.channels) { channel ->
                         ChannelItem(
                             channel = channel,
                             modifier = Modifier.padding(8.dp),

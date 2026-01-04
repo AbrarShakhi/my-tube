@@ -57,7 +57,7 @@ class ChannelRepositoryImpl @Inject constructor(
         } catch (e: HttpException) {
             Result.failure(Exception("Server error: ${e.code()}"))
         } catch (e: Exception) {
-            Result.failure(Exception(e.message ?: "Unknown error"))
+            Result.failure(Exception("Unable to find this channel"))
         }
     }
 

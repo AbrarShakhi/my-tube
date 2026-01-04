@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -16,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.github.abrarshakhi.mytube.presentation.home.state.AddChannelWithFilterState
 
@@ -63,13 +65,16 @@ fun AddFilterContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = infoText,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.weight(1f),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
+            Spacer(modifier = Modifier.width(8.dp))
             if (enabled) {
                 Button(
                     onClick = onButtonClick

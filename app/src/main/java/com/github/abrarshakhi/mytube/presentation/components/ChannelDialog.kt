@@ -28,39 +28,41 @@ import com.github.abrarshakhi.mytube.presentation.home.state.RemoveChannelState
 @Composable
 fun ChannelDialog(viewModel: HomeViewModel) {
     val addChannelState by viewModel.addChannelState.collectAsState()
-    if (addChannelState !is AddChannelState.Found) {
-        return
-    }
-    val channel = (addChannelState as AddChannelState.Found).channel
     val removeChannelState by viewModel.removeChannelState.collectAsState()
-    val isLoading = removeChannelState is RemoveChannelState.Loading
 
-    BasicAlertDialog(
-        onDismissRequest = {}, modifier = Modifier
-    ) {
-        Surface(
-            modifier = Modifier.wrapContentWidth().wrapContentHeight(),
-            shape = MaterialTheme.shapes.large,
-            tonalElevation = AlertDialogDefaults.TonalElevation,
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(text = channel.name)
-                Spacer(modifier = Modifier.height(24.dp))
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    TextButton(
-                        onClick = { viewModel.defaultState() },
-                    ) { Text("Cancel") }
-                    TextButton(
-                        onClick = { viewModel.showSheet() },
-                        enabled = isLoading
-                    ) { Text("Edit") }
-                    TextButton(
-                        onClick = { viewModel.removeChannel(channel) },
-                        enabled = isLoading
-                    ) { Text("Remove") }
+    when (val state = addChannelState) {
+        is AddChannelState.Found -> {
+            val isNotLoading = removeChannelState !is RemoveChannelState.Loading
+
+            BasicAlertDialog(onDismissRequest = {}) {
+                Surface(
+                    modifier = Modifier.wrapContentWidth().wrapContentHeight(),
+                    shape = MaterialTheme.shapes.large,
+                    tonalElevation = AlertDialogDefaults.TonalElevation,
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(text = state.channel.name)
+                        Spacer(modifier = Modifier.height(24.dp))
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            TextButton(
+                                onClick = { viewModel.defaultState() }
+                            ) { Text("Cancel") }
+
+                            TextButton(
+                                onClick = { viewModel.showSheet() },
+                                enabled = isNotLoading
+                            ) { Text("Edit") }
+
+                            TextButton(
+                                onClick = { viewModel.removeChannel(state.channel) },
+                                enabled = isNotLoading
+                            ) { Text("Remove") }
+                        }
+                    }
                 }
             }
         }
-    }
 
+        else -> Unit
+    }
 }

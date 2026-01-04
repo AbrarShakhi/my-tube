@@ -33,26 +33,29 @@ fun BottomSheet(viewModel: HomeViewModel, sheetState: SheetState) {
             AddChannelContent(
                 handle = handleTextState,
                 onTextFieldValueChange = { viewModel.setHandleText(it) },
-                onButtonClick = { viewModel.findChannel(handleTextState) },
+                onButtonClick = { viewModel.findChannel(handleTextState.trim()) },
                 addChannelState = addChannelState
             )
             Spacer(modifier = Modifier.height(24.dp))
-            if (addChannelState is AddChannelState.Found) {
-                AddFilterContent(
-                    filter = filterTextState,
-                    switchChecked = filterShouldContainState,
-                    onTextFieldValueChange = { viewModel.setFilterText(it) },
-                    onSwitchCheckedChange = { viewModel.setFilterShouldContain(it) },
-                    onButtonClick = {
-                        viewModel.addChannel(
-                            (addChannelState as AddChannelState.Found).channel,
-                            regex = filterTextState,
-                            switchChecked = filterShouldContainState
-                        )
-                    },
-                    infoText = infoState,
-                    addChannelWithFilterState = addChannelWithFilterState
-                )
+            when (val state = addChannelState) {
+                is AddChannelState.Found ->
+                    AddFilterContent(
+                        filter = filterTextState,
+                        switchChecked = filterShouldContainState,
+                        onTextFieldValueChange = { viewModel.setFilterText(it) },
+                        onSwitchCheckedChange = { viewModel.setFilterShouldContain(it) },
+                        onButtonClick = {
+                            viewModel.addChannel(
+                                state.channel,
+                                regex = filterTextState.trim(),
+                                switchChecked = filterShouldContainState
+                            )
+                        },
+                        infoText = infoState,
+                        addChannelWithFilterState = addChannelWithFilterState
+                    )
+
+                else -> Unit
             }
         }
     }

@@ -9,10 +9,12 @@ class FindChannelUseCase @Inject constructor(
     private val repository: ChannelRepository
 ) {
     suspend operator fun invoke(handle: String): Result<Channel> {
-        return if (handle.isBlank()) {
-            Result.failure(Exception("Blank Input"))
+        return if (handle.isBlank() || handle == "@") {
+            Result.failure(Exception("Blank input"))
         } else if (handle.contains(' ')) {
             Result.failure(Exception("Should not contain spaces"))
+        } else if (handle.contains('\n') || handle.contains('\r')) {
+            Result.failure(Exception("Invalid handle"))
         } else {
             repository.findChannel(handleAtChar(handle))
         }

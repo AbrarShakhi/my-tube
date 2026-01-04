@@ -2,9 +2,13 @@ package com.github.abrarshakhi.mytube.presentation.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.abrarshakhi.mytube.domain.model.Channel
+import com.github.abrarshakhi.mytube.domain.usecase.AddChannelUseCase
 import com.github.abrarshakhi.mytube.domain.usecase.FindChannelUseCase
 import com.github.abrarshakhi.mytube.domain.usecase.GetChannelsUseCase
+import com.github.abrarshakhi.mytube.domain.usecase.ShowFilterOutcomeUseCase
 import com.github.abrarshakhi.mytube.presentation.home.state.AddChannelState
+import com.github.abrarshakhi.mytube.presentation.home.state.AddChannelWithFilterState
 import com.github.abrarshakhi.mytube.presentation.home.state.ChannelListState
 import com.github.abrarshakhi.mytube.presentation.home.state.SheetState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,20 +20,11 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
+    private val showFilterOutcomeUseCase: ShowFilterOutcomeUseCase,
     private val getChannelsUseCase: GetChannelsUseCase,
-    private val findChannelUseCase: FindChannelUseCase
+    private val findChannelUseCase: FindChannelUseCase,
+    private val addChannelUseCase: AddChannelUseCase
 ) : ViewModel() {
-
-    private val _sheetState = MutableStateFlow<SheetState>(SheetState.Hidden)
-    val sheetState = _sheetState.asStateFlow()
-    fun showSheet() {
-        _sheetState.update { SheetState.Visible }
-    }
-
-    fun defaultSheet() {
-        _sheetState.update { SheetState.Hidden }
-        _addChannelState.update { AddChannelState.Cleared }
-    }
 
     private val _channelListState = MutableStateFlow<ChannelListState>(ChannelListState.Loading)
     val channelListState = _channelListState.asStateFlow()
@@ -48,8 +43,38 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    init {
-        loadChannels()
+    private val _infoState = MutableStateFlow("")
+    val infoState = _infoState.asStateFlow()
+
+    private val _handleTextState = MutableStateFlow("@")
+    val handleTextState = _handleTextState.asStateFlow()
+    fun setHandleText(text: String) {
+        _handleTextState.update { text }
+    }
+
+    private val _filterTextState = MutableStateFlow("")
+    val filterTextState = _filterTextState.asStateFlow()
+    fun setFilterText(text: String) {
+        _filterTextState.update { text }
+        _infoState.update {
+            showFilterOutcomeUseCase(
+                regex = _filterTextState.value,
+                contains = _filterShouldContainState.value
+            )
+        }
+
+    }
+
+    private val _filterShouldContainState = MutableStateFlow(true)
+    val filterShouldContainState = _filterShouldContainState.asStateFlow()
+    fun setFilterShouldContain(boolean: Boolean) {
+        _filterShouldContainState.update { boolean }
+        _infoState.update {
+            showFilterOutcomeUseCase(
+                regex = _filterTextState.value,
+                contains = _filterShouldContainState.value
+            )
+        }
     }
 
     private val _addChannelState = MutableStateFlow<AddChannelState>(AddChannelState.Cleared)
@@ -57,7 +82,7 @@ class HomeViewModel @Inject constructor(
     fun findChannel(handle: String) {
         _addChannelState.update { AddChannelState.Loading }
         viewModelScope.launch {
-            findChannelUseCase(handle).onSuccess { channel ->
+            findChannelUseCase(handle.trim()).onSuccess { channel ->
                 _addChannelState.update { AddChannelState.Found(channel) }
             }.onFailure { throwable ->
                 _addChannelState.update {
@@ -67,5 +92,53 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun selectChannel(channel: Channel) {
+        _addChannelState.update { AddChannelState.Found(channel) }
+    }
+
+    private val _addChannelWithFilterState =
+        MutableStateFlow<AddChannelWithFilterState>(AddChannelWithFilterState.Cleared)
+    val addChannelWithFilterState = _addChannelWithFilterState.asStateFlow()
+    fun addChannel(channel: Channel, regex: String, switchChecked: Boolean) {
+        _addChannelWithFilterState.update { AddChannelWithFilterState.Loading }
+        viewModelScope.launch {
+            addChannelUseCase(
+                channel.copy(
+                    filter = channel.filter.copy(
+                        contains = switchChecked, regex = regex
+                    )
+                )
+            ).onSuccess { channelName ->
+                _addChannelWithFilterState.update { AddChannelWithFilterState.Success(channelName) }
+            }.onFailure { throwable ->
+                _addChannelWithFilterState.update {
+                    AddChannelWithFilterState.Error(
+                        throwable.message ?: "Unknown Error Occurred"
+                    )
+                }
+            }
+        }
+    }
+
+    private val _sheetState = MutableStateFlow<SheetState>(SheetState.Hidden)
+    val sheetState = _sheetState.asStateFlow()
+    fun showSheet() {
+        _sheetState.update { SheetState.Visible }
+    }
+
+    fun defaultSheet() {
+        _sheetState.update { SheetState.Hidden }
+        _addChannelState.update { AddChannelState.Cleared }
+        _addChannelWithFilterState.update { AddChannelWithFilterState.Cleared }
+        _handleTextState.update { "@" }
+        _filterTextState.update { "" }
+        setFilterShouldContain(true)
+    }
+
+    init {
+        loadChannels()
+        setFilterShouldContain(true)
     }
 }

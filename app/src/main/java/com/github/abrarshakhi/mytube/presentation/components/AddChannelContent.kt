@@ -1,11 +1,14 @@
 package com.github.abrarshakhi.mytube.presentation.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -29,6 +32,7 @@ fun AddChannelContent(
         when (addChannelState) {
             is AddChannelState.Found -> ChannelItem(
                 channel = addChannelState.channel,
+                clickable = false,
                 onClick = {},
                 onLongClick = {}
             )
@@ -55,25 +59,37 @@ private fun AddChannel(
 ) {
     val enabled = addChannelState !is AddChannelState.Loading
 
-    Text(text = "Channel", style = MaterialTheme.typography.titleMedium)
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ) { Text(text = "Insert channel handle", style = MaterialTheme.typography.titleLarge) }
     Spacer(modifier = Modifier.height(8.dp))
     OutlinedTextField(
         value = handle,
         onValueChange = onTextFieldValueChange,
         label = { Text("@ChannelHandle") },
         enabled = enabled,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        maxLines = 1
     )
-    if (addChannelState is AddChannelState.Error) {
-        Spacer(modifier = Modifier.height(8.dp))
-        ErrorContent(text = addChannelState.message)
-    }
-    Spacer(modifier = Modifier.height(12.dp))
-    Button(
-        onClick = onButtonClick,
-        enabled = enabled,
-        modifier = Modifier.fillMaxWidth()
+    ErrorContent(
+        text = if (addChannelState is AddChannelState.Error) {
+            addChannelState.message
+        } else {
+            ""
+        }
+    )
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.End
     ) {
-        Text(text = "Check Channel")
+        if (enabled) {
+            Button(
+                onClick = onButtonClick,
+                modifier = Modifier.padding(4.dp)
+            ) { Text(text = "Find Channel") }
+        } else {
+            CircularProgressIndicator()
+        }
     }
 }

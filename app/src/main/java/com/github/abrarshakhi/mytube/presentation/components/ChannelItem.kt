@@ -22,13 +22,19 @@ import com.github.abrarshakhi.mytube.domain.model.Channel
 
 
 @Composable
-fun ChannelItem(channel: Channel, onClick: () -> Unit, onLongClick: () -> Unit) {
+fun ChannelItem(
+    channel: Channel,
+    modifier: Modifier = Modifier,
+    clickable: Boolean = true,
+    onClick: () -> Unit,
+    onLongClick: () -> Unit
+) {
     Card(
-        modifier = Modifier.fillMaxWidth().padding(8.dp)
-            .combinedClickable(
-                onClick = onClick,
-                onLongClick = onLongClick
-            ),
+        modifier = modifier.combinedClickable(
+            onClick = onClick,
+            onLongClick = onLongClick,
+            enabled = clickable
+        ).fillMaxWidth(),
         elevation = CardDefaults.cardElevation(14.dp),
     ) {
         Column(modifier = Modifier.padding(16.dp)) {

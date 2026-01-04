@@ -1,0 +1,13 @@
+package com.github.abrarshakhi.mytube.domain.usecase
+
+import com.github.abrarshakhi.mytube.domain.model.Channel
+import com.github.abrarshakhi.mytube.domain.repository.ChannelRepository
+import jakarta.inject.Inject
+
+class AddChannelUseCase @Inject constructor(
+    private val repository: ChannelRepository
+) {
+    suspend operator fun invoke(channel: Channel): Result<String> {
+        return repository.addChannel(channel)
+    }
+}

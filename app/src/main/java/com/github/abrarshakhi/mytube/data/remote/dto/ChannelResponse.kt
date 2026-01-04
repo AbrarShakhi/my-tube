@@ -6,9 +6,18 @@ data class ChannelResponse(
 
 data class ChannelDto(
     val id: String,
-    val snippet: Snippet
+    val snippet: SnippetDto
 )
 
-data class Snippet(
-    val title: String
+data class SnippetDto(
+    val title: String,
+    val thumbnails: ThumbnailsDto
+)
+
+data class ThumbnailsDto(
+    val default: ThumbnailDto?,
+)
+
+data class ThumbnailDto(
+    val url: String
 )

@@ -12,7 +12,8 @@ import com.github.abrarshakhi.mytube.domain.utils.toTimeSince
 fun ChannelEntity.toDomain(): Channel {
     return Channel(
         channelId = channelId,
-        name = name,
+        title = title,
+        thumbnail = thumbnail,
         hasNewUpload = hasNewUpload,
         lastUploadedSince = lastUploadedAt?.toTimeSince() ?: "No New Uploads",
         filter = ChannelFilter()
@@ -22,7 +23,8 @@ fun ChannelEntity.toDomain(): Channel {
 fun Channel.toEntity(): ChannelEntity {
     return ChannelEntity(
         channelId = channelId,
-        name = name,
+        title = title,
+        thumbnail = thumbnail,
         hasNewUpload = hasNewUpload,
     )
 }
@@ -47,13 +49,14 @@ fun ChannelWithFilter.toDomain(): Channel {
     return channel
 }
 
-fun ChannelDto.toEntity(): ChannelEntity {
+fun ChannelDto.toEntity(thumbnail: ByteArray?): ChannelEntity {
     return ChannelEntity(
         channelId = id,
-        name = snippet.title,
+        title = snippet.title,
+        thumbnail = thumbnail
     )
 }
 
-fun ChannelDto.toDomain(): Channel {
-    return toEntity().toDomain()
+fun ChannelDto.toDomain(thumbnail: ByteArray?): Channel {
+    return toEntity(thumbnail).toDomain()
 }

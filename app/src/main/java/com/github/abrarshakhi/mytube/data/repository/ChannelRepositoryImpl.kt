@@ -4,6 +4,7 @@ import com.github.abrarshakhi.mytube.BuildConfig
 import com.github.abrarshakhi.mytube.data.local.datasource.ChannelWithFilterDataSource
 import com.github.abrarshakhi.mytube.data.mapper.toDomain
 import com.github.abrarshakhi.mytube.data.mapper.toRelation
+import com.github.abrarshakhi.mytube.data.remote.Downloader
 import com.github.abrarshakhi.mytube.data.remote.api.ChannelApi
 import com.github.abrarshakhi.mytube.domain.model.Channel
 import com.github.abrarshakhi.mytube.domain.repository.ChannelRepository
@@ -44,9 +45,13 @@ class ChannelRepositoryImpl @Inject constructor(
             )
 
             val channelDto = response.items.firstOrNull()
-                ?: return Result.failure(Exception("Unimplemented Exception"))
+                ?: return Result.failure(Exception("Channel Not found"))
 
-            Result.success(channelDto.toDomain())
+            val thumbnailBytes: ByteArray? = channelDto.snippet.thumbnails.default?.url?.let { url ->
+                Downloader.toBytes(url)
+            }
+
+            Result.success(channelDto.toDomain(thumbnailBytes))
 
         } catch (_: SocketTimeoutException) {
             Result.failure(Exception("Connection timed out. Please try again."))

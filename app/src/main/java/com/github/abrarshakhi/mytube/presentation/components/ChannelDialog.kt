@@ -41,7 +41,7 @@ fun ChannelDialog(viewModel: HomeViewModel) {
                     tonalElevation = AlertDialogDefaults.TonalElevation,
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Text(text = state.channel.name)
+                        Text(text = state.channel.title)
                         Spacer(modifier = Modifier.height(24.dp))
                         Row(modifier = Modifier.fillMaxWidth()) {
                             TextButton(

@@ -61,5 +61,12 @@ class ChannelRepositoryImpl @Inject constructor(
         }
     }
 
-
+    override suspend fun removeChannel(channel: Channel): Result<String> {
+        return try {
+            channelDataSource.delete(channel.channelId)
+            Result.success(channel.channelId)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

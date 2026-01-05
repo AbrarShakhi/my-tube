@@ -99,6 +99,8 @@ class HomeViewModel @Inject constructor(
 
     fun selectChannel(channel: Channel) {
         _addChannelState.update { AddChannelState.Found(channel) }
+        setFilterText(channel.filter.regex)
+        setFilterShouldContain(channel.filter.contains)
     }
 
     private val _addChannelWithFilterState =

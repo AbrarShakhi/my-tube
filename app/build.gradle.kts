@@ -96,4 +96,7 @@ dependencies {
     implementation(libs.converter.gson)
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
+    implementation(libs.retrofit.converter)
+    implementation(libs.annotation)
+    kapt(libs.processor)
 }

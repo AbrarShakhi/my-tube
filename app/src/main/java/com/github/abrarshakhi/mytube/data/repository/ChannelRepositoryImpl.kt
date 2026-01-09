@@ -5,7 +5,7 @@ import com.github.abrarshakhi.mytube.data.local.datasource.ChannelWithFilterData
 import com.github.abrarshakhi.mytube.data.mapper.toDomain
 import com.github.abrarshakhi.mytube.data.mapper.toRelation
 import com.github.abrarshakhi.mytube.data.remote.Downloader
-import com.github.abrarshakhi.mytube.data.remote.api.ChannelApi
+import com.github.abrarshakhi.mytube.data.remote.api.YoutubeApi
 import com.github.abrarshakhi.mytube.domain.model.Channel
 import com.github.abrarshakhi.mytube.domain.repository.ChannelRepository
 import jakarta.inject.Inject
@@ -16,7 +16,7 @@ import java.net.UnknownHostException
 
 class ChannelRepositoryImpl @Inject constructor(
     private val channelDataSource: ChannelWithFilterDataSource,
-    private val channelApi: ChannelApi
+    private val youtubeApi: YoutubeApi
 ) : ChannelRepository {
 
     override suspend fun getChannels(): Result<List<Channel>> {
@@ -39,7 +39,7 @@ class ChannelRepositoryImpl @Inject constructor(
 
     override suspend fun findChannel(handle: String): Result<Channel> {
         return try {
-            val response = channelApi.getChannelById(
+            val response = youtubeApi.getChannelById(
                 handle = handle,
                 apiKey = BuildConfig.YOUTUBE_API_KEY
             )

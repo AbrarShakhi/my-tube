@@ -4,7 +4,7 @@ import com.github.abrarshakhi.mytube.data.remote.dto.ChannelResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface ChannelApi {
+interface YoutubeApi {
 
     @GET("channels")
     suspend fun getChannelById(

@@ -1,6 +1,5 @@
 package com.github.abrarshakhi.mytube.presentation.home
 
-import android.content.Intent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.github.abrarshakhi.mytube.presentation.VideoActivity
+import androidx.navigation.NavController
 import com.github.abrarshakhi.mytube.presentation.components.BottomSheet
 import com.github.abrarshakhi.mytube.presentation.components.ChannelDialog
 import com.github.abrarshakhi.mytube.presentation.components.ChannelItem
@@ -29,11 +28,13 @@ import com.github.abrarshakhi.mytube.presentation.components.ErrorContent
 import com.github.abrarshakhi.mytube.presentation.components.LoadingContent
 import com.github.abrarshakhi.mytube.presentation.home.state.ChannelListState
 import com.github.abrarshakhi.mytube.presentation.home.state.HomeState
+import com.github.abrarshakhi.mytube.presentation.navigation.Screen
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    navController: NavController,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val homeState by viewModel.homeState.collectAsState()
@@ -48,7 +49,7 @@ fun HomeScreen(
             Icon(Icons.Default.Add, contentDescription = "Add Channel")
         }
     }) { paddingValues ->
-        val context = LocalContext.current
+        LocalContext.current
         when (val state = channelListState) {
             is ChannelListState.Loading -> LoadingContent(
                 Modifier.padding(paddingValues).fillMaxSize()
@@ -63,12 +64,11 @@ fun HomeScreen(
                 LazyColumn(Modifier.padding(paddingValues)) {
                     items(state.channels) { channel ->
                         ChannelItem(
-                            channel = channel,
-                            modifier = Modifier.padding(8.dp),
-                            onClick = {
-                                context.startActivity(Intent(context, VideoActivity::class.java))
-                            },
-                            onLongClick = {
+                            channel = channel, modifier = Modifier.padding(8.dp), onClick = {
+                                navController.navigate(
+                                    Screen.Videos.createRoute(channel.channelId)
+                                )
+                            }, onLongClick = {
                                 viewModel.selectChannel(channel)
                                 viewModel.showDialog()
                             }

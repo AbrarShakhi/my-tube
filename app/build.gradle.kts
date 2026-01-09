@@ -96,7 +96,8 @@ dependencies {
     implementation(libs.converter.gson)
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
-    implementation(libs.retrofit.converter)
-    implementation(libs.annotation)
-    kapt(libs.processor)
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.20.1")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.20.1")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.20.1")
+    implementation("com.squareup.retrofit2:converter-jackson:3.0.0")
 }

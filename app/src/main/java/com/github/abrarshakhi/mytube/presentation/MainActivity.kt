@@ -4,7 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.github.abrarshakhi.mytube.presentation.home.HomeScreen
+import androidx.navigation.compose.rememberNavController
+import com.github.abrarshakhi.mytube.presentation.navigation.SetUpNavigation
 import com.github.abrarshakhi.mytube.ui.theme.MyTubeTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -15,7 +16,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MyTubeTheme {
-                HomeScreen()
+                val navController = rememberNavController()
+                SetUpNavigation(
+                    navController = navController,
+                )
             }
         }
     }

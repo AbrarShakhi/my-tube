@@ -8,16 +8,17 @@ import com.github.abrarshakhi.mytube.data.remote.Downloader
 import com.github.abrarshakhi.mytube.data.remote.api.YoutubeApi
 import com.github.abrarshakhi.mytube.domain.model.Channel
 import com.github.abrarshakhi.mytube.domain.repository.ChannelRepository
+import com.github.abrarshakhi.mytube.domain.repository.VideoRepository
 import jakarta.inject.Inject
 import retrofit2.HttpException
 import java.io.IOException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
-class ChannelRepositoryImpl @Inject constructor(
+class MyTubeRepositoryImpl @Inject constructor(
     private val channelDataSource: ChannelWithFilterDataSource,
     private val youtubeApi: YoutubeApi
-) : ChannelRepository {
+) : ChannelRepository, VideoRepository {
 
     override suspend fun getChannels(): Result<List<Channel>> {
         return Result.success(channelDataSource.getAll().map {
@@ -47,9 +48,10 @@ class ChannelRepositoryImpl @Inject constructor(
             val channelDto = response.items.firstOrNull()
                 ?: return Result.failure(Exception("Channel Not found"))
 
-            val thumbnailBytes: ByteArray? = channelDto.snippet.thumbnails.default?.url?.let { url ->
-                Downloader.toBytes(url)
-            }
+            val thumbnailBytes: ByteArray? =
+                channelDto.snippet.thumbnails.default?.url?.let { url ->
+                    Downloader.toBytes(url)
+                }
 
             Result.success(channelDto.toDomain(thumbnailBytes))
 
@@ -61,7 +63,7 @@ class ChannelRepositoryImpl @Inject constructor(
             Result.failure(Exception("Network error occurred"))
         } catch (e: HttpException) {
             Result.failure(Exception("Server error: ${e.code()}"))
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             Result.failure(Exception("Unable to find this channel"))
         }
     }

@@ -1,67 +1,63 @@
 package com.github.abrarshakhi.mytube.data.remote.dto
 
-import com.tickaroo.tikxml.annotation.Element
-import com.tickaroo.tikxml.annotation.PropertyElement
-import com.tickaroo.tikxml.annotation.Root
-import com.tickaroo.tikxml.annotation.Attribute
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 
-@Root(name = "feed")
+@JacksonXmlRootElement(localName = "feed")
 data class YoutubeFeed(
 
-    @PropertyElement(name = "title")
-    val title: String?,
+    @field:JacksonXmlProperty(localName = "title")
+    val title: String? = null,
 
-    @Element(name = "entry")
-    val entries: List<YoutubeVideoEntry>?
+    @field:JacksonXmlElementWrapper(useWrapping = false)
+    @field:JacksonXmlProperty(localName = "entry")
+    val entries: List<YoutubeVideoEntry>? = null
 )
 
-@Root(name = "entry")
+@JacksonXmlRootElement(localName = "entry")
 data class YoutubeVideoEntry(
 
-    @PropertyElement(name = "id")
-    val id: String?,
+    @field:JacksonXmlProperty(localName = "id")
+    val id: String? = null,
 
-    @PropertyElement(name = "title")
-    val title: String?,
+    @field:JacksonXmlProperty(localName = "title")
+    val title: String? = null,
 
-    @PropertyElement(name = "published")
-    val published: String?,
+    @field:JacksonXmlProperty(localName = "published")
+    val published: String? = null,
 
-    @Element(name = "link")
-    val links: List<VideoLink>?,
+    @field:JacksonXmlElementWrapper(useWrapping = false)
+    @field:JacksonXmlProperty(localName = "link")
+    val links: List<VideoLink>? = null,
 
-    @Element(name = "group")
-    val mediaGroup: MediaGroup?
+    @field:JacksonXmlProperty(localName = "group", namespace = "http://search.yahoo.com/mrss/")
+    val mediaGroup: MediaGroup? = null
 ) {
-    fun videoUrl(): String? = links?.firstOrNull { it.rel == "alternate" }
-            ?.href
+    fun videoUrl(): String? =
+        links?.firstOrNull { it.rel == "alternate" }?.href
             ?: id?.substringAfter("yt:video:")?.let {
                 "https://www.youtube.com/watch?v=$it"
             }
 }
 
-
-@Root(name = "link")
 data class VideoLink(
 
-    @Attribute(name = "href")
-    val href: String?,
+    @field:JacksonXmlProperty(isAttribute = true, localName = "href")
+    val href: String? = null,
 
-    @Attribute(name = "rel")
-    val rel: String?
+    @field:JacksonXmlProperty(isAttribute = true, localName = "rel")
+    val rel: String? = null
 )
 
-
-@Root(name = "group")
 data class MediaGroup(
 
-    @Element(name = "thumbnail")
-    val thumbnail: MediaThumbnail?
+    @field:JacksonXmlProperty(localName = "thumbnail", namespace = "http://search.yahoo.com/mrss/")
+    val thumbnail: MediaThumbnail? = null
 )
 
-@Root(name = "thumbnail")
 data class MediaThumbnail(
 
-    @Attribute(name = "url")
-    val url: String?
+    @field:JacksonXmlProperty(isAttribute = true, localName = "url")
+    val url: String? = null
 )

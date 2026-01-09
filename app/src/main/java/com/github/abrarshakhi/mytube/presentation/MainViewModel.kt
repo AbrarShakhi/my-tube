@@ -11,7 +11,7 @@ import com.github.abrarshakhi.mytube.domain.usecase.ShowFilterOutcomeUseCase
 import com.github.abrarshakhi.mytube.presentation.state.AddChannelState
 import com.github.abrarshakhi.mytube.presentation.state.AddChannelWithFilterState
 import com.github.abrarshakhi.mytube.presentation.state.ChannelListState
-import com.github.abrarshakhi.mytube.presentation.state.HomeState
+import com.github.abrarshakhi.mytube.presentation.state.ChannelScreenState
 import com.github.abrarshakhi.mytube.presentation.state.RemoveChannelState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
@@ -129,18 +129,18 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private val _homeState = MutableStateFlow<HomeState>(HomeState.Hidden)
-    val homeState = _homeState.asStateFlow()
+    private val _channelScreenState = MutableStateFlow<ChannelScreenState>(ChannelScreenState.Hidden)
+    val channelScreenState = _channelScreenState.asStateFlow()
     fun showSheet() {
-        _homeState.update { HomeState.Sheet }
+        _channelScreenState.update { ChannelScreenState.Sheet }
     }
 
     fun showDialog() {
-        _homeState.update { HomeState.Dialog }
+        _channelScreenState.update { ChannelScreenState.Dialog }
     }
 
     fun defaultState() {
-        _homeState.update { HomeState.Hidden }
+        _channelScreenState.update { ChannelScreenState.Hidden }
         _addChannelState.update { AddChannelState.Cleared }
         _addChannelWithFilterState.update { AddChannelWithFilterState.Cleared }
         _handleTextState.update { "@" }
@@ -161,7 +161,6 @@ class MainViewModel @Inject constructor(
     }
 
     fun syncVideos() {
-        TODO("Not yet implemented")
     }
 
     init {

@@ -1,6 +1,7 @@
 package com.github.abrarshakhi.mytube.presentation.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -14,16 +15,16 @@ fun AppNavGraph() {
     val navController = rememberNavController()
 
     NavHost(
-        navController = navController, startDestination = Routes.Root.Home.route
+        navController = navController, startDestination = Routes.Home.route
     ) {
-        composable(route = Routes.Root.Home.route) {
+        composable(route = Routes.Home.route) {
             HomeScreen(onNavigateToChannel = { channelId ->
-                navController.navigate(Routes.Root.IndividualVideo.createRoute(channelId))
-            })
+                navController.navigate(Routes.IndividualVideo.createRoute(channelId))
+            }, viewModel = hiltViewModel())
         }
 
         composable(
-            route = Routes.Root.IndividualVideo.route, arguments = listOf(
+            route = Routes.IndividualVideo.route, arguments = listOf(
                 navArgument("channelId") { type = NavType.StringType })
         ) { backStackEntry ->
             val channelId = backStackEntry.arguments

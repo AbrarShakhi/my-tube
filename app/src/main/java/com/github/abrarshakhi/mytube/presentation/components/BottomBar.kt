@@ -13,10 +13,7 @@ import com.github.abrarshakhi.mytube.presentation.navigation.Routes
 
 @Composable
 fun BottomBar(navController: NavController) {
-    val items = listOf(
-        Routes.HomeBottom.Channel,
-        Routes.HomeBottom.Video
-    )
+    val items = listOf(Routes.Home.Video, Routes.Home.Channel)
 
     NavigationBar {
         val currentRoute =

@@ -22,7 +22,7 @@ import com.github.abrarshakhi.mytube.presentation.navigation.Routes
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun HomeScreen(
-    onNavigateToChannel: (String) -> Unit, viewModel: MainViewModel = hiltViewModel()
+    onNavigateToChannel: (String) -> Unit, viewModel: MainViewModel
 ) {
     val bottomNavController = rememberNavController()
 
@@ -34,11 +34,11 @@ fun HomeScreen(
         val currentRoute =
             bottomNavController.currentBackStackEntryAsState().value?.destination?.route
 
-        if (currentRoute == Routes.HomeBottom.Channel.route) {
+        if (currentRoute == Routes.Home.Channel.route) {
             FloatingActionButton(onClick = { viewModel.showSheet() }) {
                 Icon(Icons.Default.Add, contentDescription = "Add Channel")
             }
-        } else if (currentRoute == Routes.HomeBottom.Video.route) {
+        } else if (currentRoute == Routes.Home.Video.route) {
             FloatingActionButton(onClick = { viewModel.syncVideos() }) {
                 Icon(Icons.Default.Sync, contentDescription = "Sync")
             }
@@ -46,15 +46,17 @@ fun HomeScreen(
     }) { paddingValues ->
         NavHost(
             navController = bottomNavController,
-            startDestination = Routes.HomeBottom.Video.route,
+            startDestination = Routes.Home.Video.route,
         ) {
-            composable(Routes.HomeBottom.Video.route) {
+            composable(Routes.Home.Video.route) {
                 VideoScreen(paddingValues)
             }
 
-            composable(Routes.HomeBottom.Channel.route) {
+            composable(Routes.Home.Channel.route) {
                 ChannelScreen(
-                    onNavigateToChannel = onNavigateToChannel, paddingValues = paddingValues
+                    onNavigateToChannel = onNavigateToChannel,
+                    paddingValues = paddingValues,
+                    viewModel = viewModel
                 )
             }
 

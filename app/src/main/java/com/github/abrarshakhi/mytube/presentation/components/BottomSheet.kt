@@ -11,12 +11,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.github.abrarshakhi.mytube.presentation.home.HomeViewModel
-import com.github.abrarshakhi.mytube.presentation.home.state.AddChannelState
+import com.github.abrarshakhi.mytube.presentation.MainViewModel
+import com.github.abrarshakhi.mytube.presentation.state.AddChannelState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheet(viewModel: HomeViewModel, sheetState: SheetState) {
+fun BottomSheet(viewModel: MainViewModel, sheetState: SheetState) {
     ModalBottomSheet(
         onDismissRequest = { viewModel.defaultState() },
         sheetState = sheetState

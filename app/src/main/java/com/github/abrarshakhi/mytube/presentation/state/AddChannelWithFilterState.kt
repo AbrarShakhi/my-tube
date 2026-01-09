@@ -1,4 +1,4 @@
-package com.github.abrarshakhi.mytube.presentation.home.state
+package com.github.abrarshakhi.mytube.presentation.state
 
 sealed interface AddChannelWithFilterState {
     object Loading : AddChannelWithFilterState

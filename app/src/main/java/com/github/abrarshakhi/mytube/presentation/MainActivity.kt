@@ -4,8 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.navigation.compose.rememberNavController
-import com.github.abrarshakhi.mytube.presentation.navigation.SetUpNavigation
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import com.github.abrarshakhi.mytube.presentation.navigation.AppNavGraph
+import com.github.abrarshakhi.mytube.presentation.screen.VideoScreen
 import com.github.abrarshakhi.mytube.ui.theme.MyTubeTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -14,13 +18,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent {
-            MyTubeTheme {
-                val navController = rememberNavController()
-                SetUpNavigation(
-                    navController = navController,
-                )
-            }
-        }
+        setContent { MyTubeTheme { AppNavGraph() } }
     }
 }

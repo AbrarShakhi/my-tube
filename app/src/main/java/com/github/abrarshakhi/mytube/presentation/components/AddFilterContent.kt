@@ -19,7 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.github.abrarshakhi.mytube.presentation.home.state.AddChannelWithFilterState
+import com.github.abrarshakhi.mytube.presentation.state.AddChannelWithFilterState
 
 @Composable
 fun AddFilterContent(

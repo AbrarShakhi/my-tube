@@ -1,4 +1,4 @@
-package com.github.abrarshakhi.mytube.presentation.home.state
+package com.github.abrarshakhi.mytube.presentation.state
 
 import com.github.abrarshakhi.mytube.domain.model.Channel
 

@@ -1,4 +1,4 @@
-package com.github.abrarshakhi.mytube.presentation.home
+package com.github.abrarshakhi.mytube.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,11 +8,11 @@ import com.github.abrarshakhi.mytube.domain.usecase.FindChannelUseCase
 import com.github.abrarshakhi.mytube.domain.usecase.GetChannelsUseCase
 import com.github.abrarshakhi.mytube.domain.usecase.RemoveChannelUseCase
 import com.github.abrarshakhi.mytube.domain.usecase.ShowFilterOutcomeUseCase
-import com.github.abrarshakhi.mytube.presentation.home.state.AddChannelState
-import com.github.abrarshakhi.mytube.presentation.home.state.AddChannelWithFilterState
-import com.github.abrarshakhi.mytube.presentation.home.state.ChannelListState
-import com.github.abrarshakhi.mytube.presentation.home.state.HomeState
-import com.github.abrarshakhi.mytube.presentation.home.state.RemoveChannelState
+import com.github.abrarshakhi.mytube.presentation.state.AddChannelState
+import com.github.abrarshakhi.mytube.presentation.state.AddChannelWithFilterState
+import com.github.abrarshakhi.mytube.presentation.state.ChannelListState
+import com.github.abrarshakhi.mytube.presentation.state.HomeState
+import com.github.abrarshakhi.mytube.presentation.state.RemoveChannelState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class MainViewModel @Inject constructor(
     private val showFilterOutcomeUseCase: ShowFilterOutcomeUseCase,
     private val getChannelsUseCase: GetChannelsUseCase,
     private val findChannelUseCase: FindChannelUseCase,
@@ -158,6 +158,10 @@ class HomeViewModel @Inject constructor(
             }
             defaultState()
         }
+    }
+
+    fun syncVideos() {
+        TODO("Not yet implemented")
     }
 
     init {

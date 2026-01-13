@@ -7,7 +7,7 @@ import jakarta.inject.Inject
 class AddChannelUseCase @Inject constructor(
     private val repository: ChannelRepository
 ) {
-    suspend operator fun invoke(channel: Channel): Result<String> {
+    suspend operator fun invoke(channel: Channel): Result<Unit> {
         return if (channel.filter.regex.isEmpty() && !channel.filter.contains) {
             Result.failure(
                 IllegalArgumentException(

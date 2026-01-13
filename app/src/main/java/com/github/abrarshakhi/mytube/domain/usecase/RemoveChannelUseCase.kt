@@ -7,7 +7,7 @@ import jakarta.inject.Inject
 class RemoveChannelUseCase @Inject constructor(
     private val repository: ChannelRepository
 ) {
-    suspend operator fun invoke(channel: Channel): Result<String> {
+    suspend operator fun invoke(channel: Channel): Result<Unit> {
         return repository.removeChannel(channel)
     }
 }

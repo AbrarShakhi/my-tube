@@ -32,7 +32,6 @@ class MainViewModel @Inject constructor(
     private val _channelListState = MutableStateFlow<ChannelListState>(ChannelListState.Loading)
     val channelListState = _channelListState.asStateFlow()
     fun loadChannels() {
-        _channelListState.update { ChannelListState.Loading }
         viewModelScope.launch {
             getChannelsUseCase().onSuccess { channels ->
                 _channelListState.update { ChannelListState.Success(channels) }
@@ -115,8 +114,8 @@ class MainViewModel @Inject constructor(
                         contains = switchChecked, regex = regex
                     )
                 )
-            ).onSuccess { channelName ->
-                _addChannelWithFilterState.update { AddChannelWithFilterState.Success(channelName) }
+            ).onSuccess {
+                _addChannelWithFilterState.update { AddChannelWithFilterState.Success(channel.title) }
                 loadChannels()
                 defaultState()
             }.onFailure { throwable ->
@@ -129,7 +128,8 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private val _channelScreenState = MutableStateFlow<ChannelScreenState>(ChannelScreenState.Hidden)
+    private val _channelScreenState =
+        MutableStateFlow<ChannelScreenState>(ChannelScreenState.Hidden)
     val channelScreenState = _channelScreenState.asStateFlow()
     fun showSheet() {
         _channelScreenState.update { ChannelScreenState.Sheet }
@@ -154,8 +154,15 @@ class MainViewModel @Inject constructor(
     fun removeChannel(channel: Channel) {
         viewModelScope.launch {
             removeChannelUseCase(channel).onSuccess {
-                loadChannels()
+                _removeChannelState.update { RemoveChannelState.Success }
+            }.onFailure { throwable ->
+                _removeChannelState.update {
+                    RemoveChannelState.Error(
+                        throwable.message ?: "Unknown Error Occurred"
+                    )
+                }
             }
+            loadChannels()
             defaultState()
         }
     }
@@ -164,6 +171,7 @@ class MainViewModel @Inject constructor(
     }
 
     init {
+        _channelListState.update { ChannelListState.Loading }
         loadChannels()
         setFilterShouldContain(true)
     }

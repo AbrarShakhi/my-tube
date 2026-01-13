@@ -8,17 +8,17 @@ import com.github.abrarshakhi.mytube.data.remote.Downloader
 import com.github.abrarshakhi.mytube.data.remote.api.YoutubeApi
 import com.github.abrarshakhi.mytube.domain.model.Channel
 import com.github.abrarshakhi.mytube.domain.repository.ChannelRepository
-import com.github.abrarshakhi.mytube.domain.repository.VideoRepository
+import com.github.abrarshakhi.mytube.domain.repository.VideoSyncRepository
 import jakarta.inject.Inject
 import retrofit2.HttpException
 import java.io.IOException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
-class MyTubeRepositoryImpl @Inject constructor(
+class MyTubeSyncRepositoryImpl @Inject constructor(
     private val channelDataSource: ChannelWithFilterDataSource,
     private val youtubeApi: YoutubeApi
-) : ChannelRepository, VideoRepository {
+) : ChannelRepository, VideoSyncRepository {
 
     override suspend fun getChannels(): Result<List<Channel>> {
         return Result.success(channelDataSource.getAll().map {
@@ -26,13 +26,13 @@ class MyTubeRepositoryImpl @Inject constructor(
         })
     }
 
-    override suspend fun addChannel(channel: Channel): Result<String> {
+    override suspend fun addChannel(channel: Channel): Result<Unit> {
         try {
             channelDataSource.insert(channel.toRelation())
             val channelFilter = channelDataSource.get(channel.channelId) ?: return Result.failure(
                 Exception("Unable to save channel")
             )
-            return Result.success(channelFilter.channel.channelId)
+            return Result.success(Unit)
         } catch (e: Exception) {
             return Result.failure(e)
         }
@@ -68,12 +68,20 @@ class MyTubeRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun removeChannel(channel: Channel): Result<String> {
+    override suspend fun removeChannel(channel: Channel): Result<Unit> {
         return try {
             channelDataSource.delete(channel.channelId)
-            Result.success(channel.channelId)
+            Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    override suspend fun syncVideos(): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun syncVideoForChannel(channelId: String): Result<Unit> {
+        TODO("Not yet implemented")
     }
 }

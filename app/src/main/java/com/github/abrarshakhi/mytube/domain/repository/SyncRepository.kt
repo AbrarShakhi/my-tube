@@ -1,6 +1,5 @@
 package com.github.abrarshakhi.mytube.domain.repository
 
-interface VideoSyncRepository {
+interface SyncRepository {
     suspend fun syncVideos() : Result<Unit>
-    suspend fun syncVideoForChannel(channelId: String): Result<Unit>
 }

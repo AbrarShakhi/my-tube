@@ -5,18 +5,18 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 
 @JacksonXmlRootElement(localName = "feed")
-data class YoutubeFeed(
+data class YoutubeFeedDto(
 
     @field:JacksonXmlProperty(localName = "title")
     val title: String? = null,
 
     @field:JacksonXmlElementWrapper(useWrapping = false)
     @field:JacksonXmlProperty(localName = "entry")
-    val entries: List<YoutubeVideoEntry>? = null
+    val entries: List<YoutubeVideoEntryDto>? = null
 )
 
 @JacksonXmlRootElement(localName = "entry")
-data class YoutubeVideoEntry(
+data class YoutubeVideoEntryDto(
 
     @field:JacksonXmlProperty(localName = "id")
     val id: String? = null,
@@ -29,19 +29,13 @@ data class YoutubeVideoEntry(
 
     @field:JacksonXmlElementWrapper(useWrapping = false)
     @field:JacksonXmlProperty(localName = "link")
-    val links: List<VideoLink>? = null,
+    val links: List<VideoLinkDto>? = null,
 
     @field:JacksonXmlProperty(localName = "group", namespace = "http://search.yahoo.com/mrss/")
-    val mediaGroup: MediaGroup? = null
-) {
-    fun videoUrl(): String? =
-        links?.firstOrNull { it.rel == "alternate" }?.href
-            ?: id?.substringAfter("yt:video:")?.let {
-                "https://www.youtube.com/watch?v=$it"
-            }
-}
+    val mediaGroup: MediaGroupDto? = null
+)
 
-data class VideoLink(
+data class VideoLinkDto(
 
     @field:JacksonXmlProperty(isAttribute = true, localName = "href")
     val href: String? = null,
@@ -50,13 +44,13 @@ data class VideoLink(
     val rel: String? = null
 )
 
-data class MediaGroup(
+data class MediaGroupDto(
 
     @field:JacksonXmlProperty(localName = "thumbnail", namespace = "http://search.yahoo.com/mrss/")
-    val thumbnail: MediaThumbnail? = null
+    val thumbnail: MediaThumbnailDto? = null
 )
 
-data class MediaThumbnail(
+data class MediaThumbnailDto(
 
     @field:JacksonXmlProperty(isAttribute = true, localName = "url")
     val url: String? = null

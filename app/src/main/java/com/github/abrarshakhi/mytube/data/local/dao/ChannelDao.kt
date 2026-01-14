@@ -7,6 +7,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.github.abrarshakhi.mytube.data.local.entity.ChannelEntity
 import com.github.abrarshakhi.mytube.data.local.relation.ChannelWithFilter
+import com.github.abrarshakhi.mytube.data.local.relation.ChannelWithVideos
 
 @Dao
 interface ChannelDao {
@@ -31,4 +32,8 @@ interface ChannelDao {
     @Transaction
     @Query("SELECT * FROM channels WHERE channelId = :channelId")
     suspend fun getChannelsWithFilter(channelId: String): ChannelWithFilter?
+
+    @Transaction
+    @Query("SELECT * FROM channels WHERE channelId = :channelId")
+    suspend fun getChannelWithVideos(channelId: String): ChannelWithVideos
 }

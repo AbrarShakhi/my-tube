@@ -5,6 +5,7 @@ import com.github.abrarshakhi.mytube.data.local.dao.ChannelDao
 import com.github.abrarshakhi.mytube.data.local.dao.ChannelFilterDao
 import com.github.abrarshakhi.mytube.data.local.dao.VideoDao
 import com.github.abrarshakhi.mytube.data.local.relation.ChannelWithFilter
+import com.github.abrarshakhi.mytube.data.local.relation.ChannelWithVideos
 
 
 class DatabaseSource(
@@ -40,5 +41,11 @@ class DatabaseSource(
         } catch (e: IllegalStateException) {
             null
         }
+    }
+
+    @Transaction
+    suspend fun insertVideos(channelWithVideos: ChannelWithVideos) {
+        videoDao.insertVideos(channelWithVideos.videos)
+        channelDao.insertChannel(channelWithVideos.channel)
     }
 }

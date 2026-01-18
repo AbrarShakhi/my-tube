@@ -3,6 +3,7 @@ package com.github.abrarshakhi.mytube.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.abrarshakhi.mytube.domain.model.Channel
+import com.github.abrarshakhi.mytube.domain.model.Video
 import com.github.abrarshakhi.mytube.domain.usecase.AddChannelUseCase
 import com.github.abrarshakhi.mytube.domain.usecase.FindChannelUseCase
 import com.github.abrarshakhi.mytube.domain.usecase.GetChannelsUseCase
@@ -14,7 +15,7 @@ import com.github.abrarshakhi.mytube.presentation.state.AddChannelWithFilterStat
 import com.github.abrarshakhi.mytube.presentation.state.ChannelListState
 import com.github.abrarshakhi.mytube.presentation.state.ChannelScreenState
 import com.github.abrarshakhi.mytube.presentation.state.RemoveChannelState
-import com.github.abrarshakhi.mytube.presentation.state.VideoListState
+import com.github.abrarshakhi.mytube.presentation.state.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,19 +51,21 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private val _videoListState = MutableStateFlow<VideoListState>(VideoListState.Loading)
+
+    private val _videoListState = MutableStateFlow(UiState.loading(emptyList<Video>()))
     val videoListState = _videoListState.asStateFlow()
     fun loadVideos() {
         viewModelScope.launch {
-            getVideosUseCase().onStart {
-                _videoListState.value = VideoListState.Loading
-            }.catch { throwable ->
-                _videoListState.value = VideoListState.Error(
-                    throwable.message ?: "Unknown Error Occurred"
-                )
-            }.collect { videos ->
-                _videoListState.value = VideoListState.Success(videos)
-            }
+            getVideosUseCase()
+                .onStart {
+                    _videoListState.update { it.asLoading() }
+                }
+                .catch { e ->
+                    _videoListState.update { it.asError(e.message ?: "Unknown Error") }
+                }
+                .collect { videos ->
+                    _videoListState.update { it.asSuccess(videos) }
+                }
         }
     }
 

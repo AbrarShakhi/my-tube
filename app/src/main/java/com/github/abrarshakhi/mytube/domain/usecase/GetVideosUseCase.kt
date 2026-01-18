@@ -8,7 +8,7 @@ import javax.inject.Inject
 class GetVideosUseCase @Inject constructor(
     private val repository: VideoRepository
 ) {
-    suspend operator fun invoke(): Flow<List<Video>> {
+    operator fun invoke(): Flow<List<Video>> {
         return repository.getVideos()
     }
 }

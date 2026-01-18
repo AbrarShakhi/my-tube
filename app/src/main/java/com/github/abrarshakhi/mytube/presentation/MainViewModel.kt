@@ -9,16 +9,18 @@ import com.github.abrarshakhi.mytube.domain.usecase.GetChannelsUseCase
 import com.github.abrarshakhi.mytube.domain.usecase.GetVideosUseCase
 import com.github.abrarshakhi.mytube.domain.usecase.RemoveChannelUseCase
 import com.github.abrarshakhi.mytube.domain.usecase.ShowFilterOutcomeUseCase
-import com.github.abrarshakhi.mytube.domain.usecase.SyncVideosUseCase
 import com.github.abrarshakhi.mytube.presentation.state.AddChannelState
 import com.github.abrarshakhi.mytube.presentation.state.AddChannelWithFilterState
 import com.github.abrarshakhi.mytube.presentation.state.ChannelListState
 import com.github.abrarshakhi.mytube.presentation.state.ChannelScreenState
 import com.github.abrarshakhi.mytube.presentation.state.RemoveChannelState
+import com.github.abrarshakhi.mytube.presentation.state.VideoListState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -44,6 +46,22 @@ class MainViewModel @Inject constructor(
                         throwable.message ?: "Unknown Error Occurred"
                     )
                 }
+            }
+        }
+    }
+
+    private val _videoListState = MutableStateFlow<VideoListState>(VideoListState.Loading)
+    val videoListState = _videoListState.asStateFlow()
+    fun loadVideos() {
+        viewModelScope.launch {
+            getVideosUseCase().onStart {
+                _videoListState.value = VideoListState.Loading
+            }.catch { throwable ->
+                _videoListState.value = VideoListState.Error(
+                    throwable.message ?: "Unknown Error Occurred"
+                )
+            }.collect { videos ->
+                _videoListState.value = VideoListState.Success(videos)
             }
         }
     }
@@ -174,7 +192,7 @@ class MainViewModel @Inject constructor(
     }
 
     init {
-        _channelListState.update { ChannelListState.Loading }
+        loadVideos()
         loadChannels()
         setFilterShouldContain(true)
     }

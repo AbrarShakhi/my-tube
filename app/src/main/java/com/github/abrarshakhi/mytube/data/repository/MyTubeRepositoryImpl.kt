@@ -14,11 +14,14 @@ import com.github.abrarshakhi.mytube.data.remote.api.YoutubeApi
 import com.github.abrarshakhi.mytube.data.remote.api.YoutubeRssApi
 import com.github.abrarshakhi.mytube.data.utils.networkCall
 import com.github.abrarshakhi.mytube.domain.model.Channel
+import com.github.abrarshakhi.mytube.domain.model.Video
 import com.github.abrarshakhi.mytube.domain.repository.ChannelRepository
 import com.github.abrarshakhi.mytube.domain.repository.SyncRepository
 import com.github.abrarshakhi.mytube.domain.repository.VideoRepository
 import jakarta.inject.Inject
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 
@@ -81,12 +84,15 @@ class MyTubeRepositoryImpl @Inject constructor(
                     if (newVideos.isEmpty()) return@launch
 
                     dbSource.insertVideos(ChannelWithVideos(channel, newVideos))
+                    // TODO: Send notification
+                    // TODO: Download thumbnail
+                    // TODO: Store thumbnail in cache.
                 }
             }.joinAll()
+            // TODO: Broadcast video changed.
             Result.success(Unit)
         }
     }
-
 
     suspend fun fetchVideoForChannel(
         channel: ChannelEntity,
@@ -114,5 +120,11 @@ class MyTubeRepositoryImpl @Inject constructor(
                     (regex.containsMatchIn(it.title) == filter.contains)
         }
         return Result.success(newVideos)
+    }
+
+    override fun getVideos(): Flow<List<Video>> {
+        return dbSource.getAllVideos().map { list ->
+            list.map { it.toDomain(null) }
+        }
     }
 }

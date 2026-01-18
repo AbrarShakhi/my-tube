@@ -4,10 +4,13 @@ import com.github.abrarshakhi.mytube.data.local.entity.ChannelEntity
 import com.github.abrarshakhi.mytube.data.local.entity.ChannelFilterEntity
 import com.github.abrarshakhi.mytube.data.local.entity.VideoEntity
 import com.github.abrarshakhi.mytube.data.local.relation.ChannelWithFilter
+import com.github.abrarshakhi.mytube.data.local.relation.ChannelWithVideos
+import com.github.abrarshakhi.mytube.data.local.relation.VideoWithChannel
 import com.github.abrarshakhi.mytube.data.remote.dto.ChannelDto
 import com.github.abrarshakhi.mytube.data.remote.dto.YoutubeVideoEntryDto
 import com.github.abrarshakhi.mytube.domain.model.Channel
 import com.github.abrarshakhi.mytube.domain.model.ChannelFilter
+import com.github.abrarshakhi.mytube.domain.model.Video
 import com.github.abrarshakhi.mytube.domain.utils.toTimeSince
 import java.time.Instant
 
@@ -88,3 +91,27 @@ fun YoutubeVideoEntryDto.toEntity(channelId: String): VideoEntity? {
     )
 }
 
+fun VideoWithChannel.toDomain(thumbnail: ByteArray?): Video {
+    return Video(
+        videoId = video.videoId,
+        title = video.title,
+        videoUrl = video.videoUrl,
+        thumbnail = thumbnail,
+        publishedAt = video.publishedAt.toTimeSince(),
+        channel = channel.toDomain()
+    )
+}
+
+fun ChannelWithVideos.toDomain(): List<Video> {
+    val channel = channel.toDomain()
+    return videos.map {
+        return@map Video(
+            videoId = it.videoId,
+            title = it.title,
+            videoUrl = it.videoUrl,
+            thumbnail = null,
+            publishedAt = it.publishedAt.toTimeSince(),
+            channel = channel
+        )
+    }
+}

@@ -6,8 +6,10 @@ import com.github.abrarshakhi.mytube.domain.model.Channel
 import com.github.abrarshakhi.mytube.domain.usecase.AddChannelUseCase
 import com.github.abrarshakhi.mytube.domain.usecase.FindChannelUseCase
 import com.github.abrarshakhi.mytube.domain.usecase.GetChannelsUseCase
+import com.github.abrarshakhi.mytube.domain.usecase.GetVideosUseCase
 import com.github.abrarshakhi.mytube.domain.usecase.RemoveChannelUseCase
 import com.github.abrarshakhi.mytube.domain.usecase.ShowFilterOutcomeUseCase
+import com.github.abrarshakhi.mytube.domain.usecase.SyncVideosUseCase
 import com.github.abrarshakhi.mytube.presentation.state.AddChannelState
 import com.github.abrarshakhi.mytube.presentation.state.AddChannelWithFilterState
 import com.github.abrarshakhi.mytube.presentation.state.ChannelListState
@@ -26,7 +28,8 @@ class MainViewModel @Inject constructor(
     private val getChannelsUseCase: GetChannelsUseCase,
     private val findChannelUseCase: FindChannelUseCase,
     private val addChannelUseCase: AddChannelUseCase,
-    private val removeChannelUseCase: RemoveChannelUseCase
+    private val removeChannelUseCase: RemoveChannelUseCase,
+    private val getVideosUseCase: GetVideosUseCase,
 ) : ViewModel() {
 
     private val _channelListState = MutableStateFlow<ChannelListState>(ChannelListState.Loading)

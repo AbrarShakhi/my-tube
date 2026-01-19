@@ -19,11 +19,12 @@ import com.github.abrarshakhi.mytube.domain.repository.ChannelRepository
 import com.github.abrarshakhi.mytube.domain.repository.SyncRepository
 import com.github.abrarshakhi.mytube.domain.repository.VideoRepository
 import jakarta.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.joinAll
-import kotlinx.coroutines.launch
 
 class MyTubeRepositoryImpl @Inject constructor(
     private val dbSource: DatabaseSource,
@@ -49,18 +50,16 @@ class MyTubeRepositoryImpl @Inject constructor(
     override suspend fun findChannel(handle: String): Result<Channel> {
         val response = networkCall {
             youtubeApi.getChannelById(
-                handle = handle,
-                apiKey = BuildConfig.YOUTUBE_API_KEY
+                handle = handle, apiKey = BuildConfig.YOUTUBE_API_KEY
             )
         }.getOrElse { error -> return Result.failure(error) }
 
-        val channelDto = response.items.firstOrNull()
-            ?: return Result.failure(Exception("Channel Not found"))
+        val channelDto =
+            response.items.firstOrNull() ?: return Result.failure(Exception("Channel Not found"))
 
-        val thumbnailBytes: ByteArray? =
-            channelDto.snippet.thumbnails.default?.url?.let { url ->
-                Downloader.toBytes(url)
-            }
+        val thumbnailBytes: ByteArray? = channelDto.snippet.thumbnails.default?.url?.let { url ->
+            Downloader.toBytes(url)
+        }
 
         return Result.success(channelDto.toDomain(thumbnailBytes))
     }
@@ -74,37 +73,33 @@ class MyTubeRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun syncVideos(): Result<Unit> {
-        return coroutineScope {
+    override suspend fun syncVideos(): Result<Unit> = coroutineScope {
+        val dispatcher = Dispatchers.IO.limitedParallelism(4)
+        try {
             dbSource.getAllChannel().map { (channel, filter) ->
-                return@map launch {
-                    val newVideos = fetchVideoForChannel(channel, filter).getOrNull()
-                        ?: return@launch
-
-                    if (newVideos.isEmpty()) return@launch
-
-                    dbSource.insertVideos(ChannelWithVideos(channel, newVideos))
-                    // TODO: Send notification
-                    // TODO: Download thumbnail
-                    // TODO: Store thumbnail in cache.
+                async(dispatcher) {
+                    val newVideos = fetchVideoForChannel(channel, filter).getOrThrow()
+                    if (newVideos.isNotEmpty()) {
+                        dbSource.insertVideos(ChannelWithVideos(channel, newVideos))
+                    }
                 }
-            }.joinAll()
-            // TODO: Broadcast video changed.
+            }.awaitAll()
             Result.success(Unit)
+        } catch (e: Throwable) {
+            Result.failure(e)
         }
     }
 
+
     suspend fun fetchVideoForChannel(
-        channel: ChannelEntity,
-        filter: ChannelFilterEntity
+        channel: ChannelEntity, filter: ChannelFilterEntity
     ): Result<List<VideoEntity>> {
         val ytFeed = networkCall {
             youtubeRssApi.getLatestVideosByChannelId(channel.channelId)
         }.getOrElse { error ->
             return Result.failure(error)
         }
-        val videoEntriesDto = ytFeed.entries
-            ?: return Result.failure(Exception())
+        val videoEntriesDto = ytFeed.entries ?: return Result.failure(Exception())
 
         val videoEntities: MutableList<VideoEntity> = mutableListOf()
         for (videoEntry in videoEntriesDto) {
@@ -116,8 +111,7 @@ class MyTubeRepositoryImpl @Inject constructor(
         val lastUpload = channel.lastUploadedAt ?: -1L
 
         val newVideos = videoEntities.filter {
-            it.publishedAt > lastUpload &&
-                    (regex.containsMatchIn(it.title) == filter.contains)
+            it.publishedAt > lastUpload && (regex.containsMatchIn(it.title) == filter.contains)
         }
         return Result.success(newVideos)
     }

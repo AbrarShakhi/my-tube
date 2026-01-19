@@ -6,7 +6,7 @@ import javax.inject.Inject
 class SyncVideosUseCase @Inject constructor(
     private val repository: SyncRepository
 ) {
-    suspend operator fun invoke():Result<Unit>{
+    suspend operator fun invoke(): Result<Unit> {
         return repository.syncVideos()
     }
 }

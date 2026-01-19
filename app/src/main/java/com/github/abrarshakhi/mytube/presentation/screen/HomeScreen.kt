@@ -2,7 +2,6 @@ package com.github.abrarshakhi.mytube.presentation.screen
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -10,7 +9,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -31,16 +29,9 @@ fun HomeScreen(
     }, topBar = {
         TopAppBar(title = { Text("MyTube") })
     }, floatingActionButton = {
-        val currentRoute =
-            bottomNavController.currentBackStackEntryAsState().value?.destination?.route
-
-        if (currentRoute == Routes.Home.Channel.route) {
+        if (bottomNavController.currentBackStackEntryAsState().value?.destination?.route == Routes.Home.Channel.route) {
             FloatingActionButton(onClick = { viewModel.showSheet() }) {
                 Icon(Icons.Default.Add, contentDescription = "Add Channel")
-            }
-        } else if (currentRoute == Routes.Home.Video.route) {
-            FloatingActionButton(onClick = { viewModel.syncVideos() }) {
-                Icon(Icons.Default.Sync, contentDescription = "Sync")
             }
         }
     }) { paddingValues ->

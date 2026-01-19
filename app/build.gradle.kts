@@ -100,4 +100,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.20.1")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.20.1")
     implementation("com.squareup.retrofit2:converter-jackson:3.0.0")
+    implementation("androidx.work:work-runtime-ktx:2.11.0")
+    implementation("androidx.hilt:hilt-work:1.3.0")
+    implementation("androidx.compose.material3:material3-pullrefresh:1.3.1")
 }

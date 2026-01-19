@@ -49,7 +49,7 @@ fun HomeScreen(
             startDestination = Routes.Home.Video.route,
         ) {
             composable(Routes.Home.Video.route) {
-                VideoScreen(paddingValues)
+                VideoScreen(paddingValues, viewModel)
             }
 
             composable(Routes.Home.Channel.route) {

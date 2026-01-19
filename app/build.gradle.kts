@@ -102,5 +102,4 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-jackson:3.0.0")
     implementation("androidx.work:work-runtime-ktx:2.11.0")
     implementation("androidx.hilt:hilt-work:1.3.0")
-    implementation("androidx.compose.material3:material3-pullrefresh:1.3.1")
 }

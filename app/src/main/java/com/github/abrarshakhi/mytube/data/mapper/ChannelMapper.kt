@@ -102,6 +102,17 @@ fun VideoWithChannel.toDomain(thumbnail: ByteArray?): Video {
     )
 }
 
+fun VideoEntity.toDomain(channel: ChannelEntity, thumbnail: ByteArray?): Video {
+    return Video(
+        videoId = videoId,
+        title = title,
+        videoUrl = videoUrl,
+        thumbnail = thumbnail,
+        publishedAt = publishedAt.toTimeSince(),
+        channel = channel.toDomain()
+    )
+}
+
 fun ChannelWithVideos.toDomain(): List<Video> {
     val channel = channel.toDomain()
     return videos.map {

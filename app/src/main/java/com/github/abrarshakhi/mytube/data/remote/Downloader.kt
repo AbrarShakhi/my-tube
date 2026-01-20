@@ -1,5 +1,6 @@
 package com.github.abrarshakhi.mytube.data.remote
 
+import androidx.core.net.toUri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.URL

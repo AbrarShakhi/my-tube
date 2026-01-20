@@ -1,4 +1,4 @@
-package com.github.abrarshakhi.mytube.presentation.reciver
+package com.github.abrarshakhi.mytube.presentation.receiver
 
 import android.content.BroadcastReceiver
 import android.content.Context

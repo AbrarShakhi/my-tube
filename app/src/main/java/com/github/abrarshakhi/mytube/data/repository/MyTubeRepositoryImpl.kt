@@ -1,6 +1,7 @@
 package com.github.abrarshakhi.mytube.data.repository
 
 import com.github.abrarshakhi.mytube.BuildConfig
+import com.github.abrarshakhi.mytube.data.local.cache.ThumbnailCache
 import com.github.abrarshakhi.mytube.data.local.datasource.DatabaseSource
 import com.github.abrarshakhi.mytube.data.local.entity.ChannelEntity
 import com.github.abrarshakhi.mytube.data.local.entity.ChannelFilterEntity
@@ -9,6 +10,7 @@ import com.github.abrarshakhi.mytube.data.local.relation.ChannelWithVideos
 import com.github.abrarshakhi.mytube.data.mapper.toDomain
 import com.github.abrarshakhi.mytube.data.mapper.toEntity
 import com.github.abrarshakhi.mytube.data.mapper.toRelation
+import com.github.abrarshakhi.mytube.data.notification.VideoNotifier
 import com.github.abrarshakhi.mytube.data.remote.Downloader
 import com.github.abrarshakhi.mytube.data.remote.api.YoutubeApi
 import com.github.abrarshakhi.mytube.data.remote.api.YoutubeRssApi
@@ -20,16 +22,20 @@ import com.github.abrarshakhi.mytube.domain.repository.SyncRepository
 import com.github.abrarshakhi.mytube.domain.repository.VideoRepository
 import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.withContext
 
 class MyTubeRepositoryImpl @Inject constructor(
     private val dbSource: DatabaseSource,
     private val youtubeApi: YoutubeApi,
     private val youtubeRssApi: YoutubeRssApi,
+    private val thumbnailCache: ThumbnailCache,
+    private val videoNotifier: VideoNotifier
 ) : ChannelRepository, SyncRepository, VideoRepository {
 
     override suspend fun getChannels(): Result<List<Channel>> {
@@ -74,16 +80,32 @@ class MyTubeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun syncVideos(): Result<Unit> = coroutineScope {
-        val dispatcher = Dispatchers.IO.limitedParallelism(4)
         try {
-            dbSource.getAllChannel().map { (channel, filter) ->
-                async(dispatcher) {
-                    val newVideos = fetchVideoForChannel(channel, filter).getOrThrow()
-                    if (newVideos.isNotEmpty()) {
+            val dispatcher = Dispatchers.IO.limitedParallelism(4)
+            if (dbSource.getAllChannel().map { (channel, filter) ->
+                    return@map async(dispatcher) {
+                        val newVideos = fetchVideoForChannel(channel, filter).getOrThrow()
+                        if (newVideos.isEmpty()) {
+                            return@async false
+                        }
+
                         dbSource.insertVideos(ChannelWithVideos(channel, newVideos))
+                        newVideos.forEach { videoEntity ->
+                            val key = videoEntity.videoId
+                            val thumbnailBytes = thumbnailCache.get(key)
+                                ?: videoEntity.thumbnailUrl?.let { Downloader.toBytes(it) }
+                                    ?.also { thumbnailCache.put(key, it) }
+                            videoNotifier.notify(
+                                videoEntity.toDomain(
+                                    channel = channel, thumbnail = thumbnailBytes
+                                )
+                            )
+                        }
+                        return@async true
                     }
-                }
-            }.awaitAll()
+                }.awaitAll().any { it }) {
+                TODO("Send custom broadcast")
+            }
             Result.success(Unit)
         } catch (e: Throwable) {
             Result.failure(e)
@@ -116,9 +138,10 @@ class MyTubeRepositoryImpl @Inject constructor(
         return Result.success(newVideos)
     }
 
-    override fun getVideos(): Flow<List<Video>> {
-        return dbSource.getAllVideos().map { list ->
-            list.map { it.toDomain(null) }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun getVideos(): Flow<List<Video>> = dbSource.getAllVideos().mapLatest { list ->
+        withContext(Dispatchers.IO) {
+            list.map { it.toDomain(thumbnailCache.get(it.video.videoId)) }
         }
     }
 }

@@ -6,48 +6,48 @@ import com.tickaroo.tikxml.annotation.Xml
 
 @Xml(name = "feed")
 data class YoutubeFeedDto(
-    @Element(name = "title")
+    @param:Element(name = "title")
     val title: String?,
 
-    @Element(name = "entry")
+    @param:Element(name = "entry")
     val entries: List<YoutubeVideoEntryDto>?
 )
 
 @Xml(name = "entry")
 data class YoutubeVideoEntryDto(
-    @Element(name = "yt:videoId")
+    @param:Element(name = "yt:videoId")
     val videoId: String?,
 
-    @Element(name = "title")
+    @param:Element(name = "title")
     val title: String?,
 
-    @Element(name = "published")
+    @param:Element(name = "published")
     val published: String?,
 
-    @Element(name = "link")
+    @param:Element(name = "link")
     val links: List<VideoLinkDto>?,
 
-    @Element(name = "media:group")
+    @param:Element(name = "media:group")
     val mediaGroup: MediaGroupDto?
 )
 
 @Xml(name = "link")
 data class VideoLinkDto(
-    @Attribute(name = "href")
+    @param:Attribute(name = "href")
     val href: String?,
 
-    @Attribute(name = "rel")
+    @param:Attribute(name = "rel")
     val rel: String?
 )
 
 @Xml(name = "media:group")
 data class MediaGroupDto(
-    @Element(name = "media:thumbnail")
+    @param:Element(name = "media:thumbnail")
     val thumbnails: List<MediaThumbnailDto>?
 )
 
 @Xml(name = "media:thumbnail")
 data class MediaThumbnailDto(
-    @Attribute(name = "url")
+    @param:Attribute(name = "url")
     val url: String?
 )

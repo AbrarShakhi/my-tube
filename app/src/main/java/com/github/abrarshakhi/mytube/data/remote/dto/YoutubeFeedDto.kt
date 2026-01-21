@@ -1,57 +1,53 @@
 package com.github.abrarshakhi.mytube.data.remote.dto
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
+import com.tickaroo.tikxml.annotation.Attribute
+import com.tickaroo.tikxml.annotation.Element
+import com.tickaroo.tikxml.annotation.Xml
 
-@JacksonXmlRootElement(localName = "feed")
+@Xml(name = "feed")
 data class YoutubeFeedDto(
+    @Element(name = "title")
+    val title: String?,
 
-    @field:JacksonXmlProperty(localName = "title")
-    val title: String? = null,
-
-    @field:JacksonXmlElementWrapper(useWrapping = false)
-    @field:JacksonXmlProperty(localName = "entry")
-    val entries: List<YoutubeVideoEntryDto>? = null
+    @Element(name = "entry")
+    val entries: List<YoutubeVideoEntryDto>?
 )
 
-@JacksonXmlRootElement(localName = "entry")
+@Xml(name = "entry")
 data class YoutubeVideoEntryDto(
+    @Element(name = "yt:videoId")
+    val videoId: String?,
 
-    @field:JacksonXmlProperty(localName = "id")
-    val id: String? = null,
+    @Element(name = "title")
+    val title: String?,
 
-    @field:JacksonXmlProperty(localName = "title")
-    val title: String? = null,
+    @Element(name = "published")
+    val published: String?,
 
-    @field:JacksonXmlProperty(localName = "published")
-    val published: String? = null,
+    @Element(name = "link")
+    val links: List<VideoLinkDto>?,
 
-    @field:JacksonXmlElementWrapper(useWrapping = false)
-    @field:JacksonXmlProperty(localName = "link")
-    val links: List<VideoLinkDto>? = null,
-
-    @field:JacksonXmlProperty(localName = "group", namespace = "http://search.yahoo.com/mrss/")
-    val mediaGroup: MediaGroupDto? = null
+    @Element(name = "media:group")
+    val mediaGroup: MediaGroupDto?
 )
 
+@Xml(name = "link")
 data class VideoLinkDto(
+    @Attribute(name = "href")
+    val href: String?,
 
-    @field:JacksonXmlProperty(isAttribute = true, localName = "href")
-    val href: String? = null,
-
-    @field:JacksonXmlProperty(isAttribute = true, localName = "rel")
-    val rel: String? = null
+    @Attribute(name = "rel")
+    val rel: String?
 )
 
+@Xml(name = "media:group")
 data class MediaGroupDto(
-
-    @field:JacksonXmlProperty(localName = "thumbnail", namespace = "http://search.yahoo.com/mrss/")
-    val thumbnail: MediaThumbnailDto? = null
+    @Element(name = "media:thumbnail")
+    val thumbnails: List<MediaThumbnailDto>?
 )
 
+@Xml(name = "media:thumbnail")
 data class MediaThumbnailDto(
-
-    @field:JacksonXmlProperty(isAttribute = true, localName = "url")
-    val url: String? = null
+    @Attribute(name = "url")
+    val url: String?
 )

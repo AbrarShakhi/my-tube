@@ -68,7 +68,7 @@ fun ChannelDto.toDomain(thumbnail: ByteArray?): Channel {
 }
 
 fun YoutubeVideoEntryDto.toEntity(channelId: String): VideoEntity? {
-    val videoId = id
+    val videoId = videoId
         ?.takeIf { it.startsWith("yt:video:") }
         ?.substringAfter("yt:video:")
         ?.takeIf { it.isNotBlank() }
@@ -81,12 +81,20 @@ fun YoutubeVideoEntryDto.toEntity(channelId: String): VideoEntity? {
     } ?: return null
 
     val safeTitle = title?.takeIf { it.isNotBlank() } ?: return null
+    val thumbnailUrl =
+        mediaGroup?.thumbnails?.let { list ->
+            when {
+                list.size > 1 -> list[1].url
+                list.isNotEmpty() -> list[0].url
+                else -> null
+            }
+        }
 
     return VideoEntity(
         videoId = videoId,
         channelOwnerId = channelId,
         title = safeTitle,
-        thumbnailUrl = mediaGroup?.thumbnail?.url,
+        thumbnailUrl = thumbnailUrl,
         publishedAt = publishedAt
     )
 }

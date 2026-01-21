@@ -1,9 +1,9 @@
 package com.github.abrarshakhi.mytube.di
 
-import com.fasterxml.jackson.dataformat.xml.XmlMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.github.abrarshakhi.mytube.data.remote.api.YoutubeApi
 import com.github.abrarshakhi.mytube.data.remote.api.YoutubeRssApi
+import com.tickaroo.tikxml.TikXml
+import com.tickaroo.tikxml.retrofit.TikXmlConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,7 +11,6 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.jackson.JacksonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
@@ -53,17 +52,17 @@ object NetworkModule {
     fun provideYoutubeRssRetrofit(
         okHttpClient: OkHttpClient
     ): Retrofit {
-        val xmlMapper = XmlMapper.builder()
-            .addModule(KotlinModule.Builder().build())
-            .defaultUseWrapper(false)
+        val tikXml = TikXml.Builder()
+            .exceptionOnUnreadXml(false)
             .build()
 
         return Retrofit.Builder()
-            .baseUrl(YT_RSS_URL)
+            .baseUrl("https://www.youtube.com/")
             .client(okHttpClient)
-            .addConverterFactory(JacksonConverterFactory.create(xmlMapper))
+            .addConverterFactory(TikXmlConverterFactory.create(tikXml))
             .build()
     }
+
 
     // ---------- APIs ----------
     @Provides

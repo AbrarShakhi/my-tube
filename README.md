@@ -32,6 +32,20 @@ A user subscribes to the *MoreSidemen* channel and receives notifications only w
 
 ---
 
+## Screenshots
+
+<p align="center">
+  <img src="public/4.jpeg" width="20%" alt="Add channel with regex filter">
+  &nbsp;&nbsp;
+  <img src="public/3.jpeg" width="20%" alt="list of added channel">
+  &nbsp;&nbsp;
+  <img src="public/2.jpeg" width="20%" alt="list of videos">
+  &nbsp;&nbsp;
+  <img src="public/1.jpeg" width="20%" alt="list of videos">
+</p>
+
+---
+
 ## How It Works
 
 ### Channel Discovery
@@ -85,20 +99,6 @@ A user subscribes to the *MoreSidemen* channel and receives notifications only w
 
 ---
 
-## Screenshots
-
-<p align="center">
-  <img src="public/4.jpeg" width="20%" alt="Add channel with regex filter">
-  &nbsp;&nbsp;
-  <img src="public/3.jpeg" width="20%" alt="list of added channel">
-  &nbsp;&nbsp;
-  <img src="public/2.jpeg" width="20%" alt="list of videos">
-  &nbsp;&nbsp;
-  <img src="public/1.jpeg" width="20%" alt="list of videos">
-</p>
-
----
-
 ## Getting Started
 
 ### Prerequisites
@@ -145,3 +145,4 @@ See the [LICENSE](LICENCE) file for details.
 ## Credits
 
 <a href="https://www.flaticon.com/free-icons/paper" title="paper icons">Paper icons created by Pixel perfect - Flaticon</a>
+

@@ -191,9 +191,6 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun syncVideos() {
-    }
-
     init {
         loadVideos()
         loadChannels()

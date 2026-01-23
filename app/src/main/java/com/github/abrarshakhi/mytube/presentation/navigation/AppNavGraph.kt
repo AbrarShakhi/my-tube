@@ -7,20 +7,21 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.github.abrarshakhi.mytube.presentation.MainViewModel
 import com.github.abrarshakhi.mytube.presentation.screen.HomeScreen
 import com.github.abrarshakhi.mytube.presentation.screen.IndividualVideoScreen
 
 @Composable
 fun AppNavGraph() {
     val navController = rememberNavController()
-
+    val viewModel: MainViewModel = hiltViewModel()
     NavHost(
         navController = navController, startDestination = Routes.Home.route
     ) {
         composable(route = Routes.Home.route) {
             HomeScreen(onNavigateToChannel = { channelId ->
-                navController.navigate(Routes.IndividualVideo.createRoute(channelId))
-            }, viewModel = hiltViewModel())
+                // navController.navigate(Routes.IndividualVideo.createRoute(channelId))
+            }, viewModel = viewModel)
         }
 
         composable(
@@ -31,9 +32,12 @@ fun AppNavGraph() {
                 ?.getString("channelId")
                 ?: return@composable
 
-            IndividualVideoScreen(channelId = channelId, onBack = {
-                navController.popBackStack()
-            })
+            IndividualVideoScreen(
+                channelId = channelId,
+                viewModel = viewModel,
+                onBack = { navController.popBackStack() },
+                onVideoClick = ExternalApp::openIn
+            )
         }
     }
 }

@@ -18,7 +18,7 @@ object SyncScheduler {
             .build()
 
         val request = PeriodicWorkRequestBuilder<SyncVideosWorker>(
-            6, TimeUnit.HOURS // predictable fetch interval
+            6, TimeUnit.HOURS
         )
             .setConstraints(constraints)
             .build()

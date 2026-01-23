@@ -15,6 +15,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.github.abrarshakhi.mytube.presentation.MainViewModel
 import com.github.abrarshakhi.mytube.presentation.components.BottomBar
+import com.github.abrarshakhi.mytube.presentation.navigation.ExternalApp
 import com.github.abrarshakhi.mytube.presentation.navigation.Routes
 
 @Composable
@@ -40,7 +41,7 @@ fun HomeScreen(
             startDestination = Routes.Home.Video.route,
         ) {
             composable(Routes.Home.Video.route) {
-                VideoScreen(paddingValues, viewModel)
+                VideoScreen(paddingValues, viewModel, ExternalApp::openIn)
             }
 
             composable(Routes.Home.Channel.route) {

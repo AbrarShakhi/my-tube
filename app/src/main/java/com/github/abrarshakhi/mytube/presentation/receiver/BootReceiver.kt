@@ -7,6 +7,8 @@ import com.github.abrarshakhi.mytube.presentation.worker.SyncScheduler
 
 class BootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        SyncScheduler.schedule(context)
+        if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
+            SyncScheduler.schedule(context)
+        }
     }
 }

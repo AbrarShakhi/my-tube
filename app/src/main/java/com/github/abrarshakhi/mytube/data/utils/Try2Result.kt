@@ -1,5 +1,8 @@
 package com.github.abrarshakhi.mytube.data.utils
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import okhttp3.Dispatcher
 import retrofit2.HttpException
 import java.io.IOException
 import java.net.SocketTimeoutException
@@ -18,7 +21,7 @@ suspend fun <T> networkCall(apiCall: suspend () -> T): Result<T> {
         Result.failure(Exception("Network error occurred"))
     } catch (e: HttpException) {
         Result.failure(Exception("Server error: ${e.code()}"))
-    } catch (_: Exception) {
-        Result.failure(Exception("Unable to find this channel"))
+    } catch (e: Exception) {
+        Result.failure(e)
     }
 }

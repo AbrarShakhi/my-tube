@@ -61,7 +61,7 @@ A user subscribes to the *MoreSidemen* channel and receives notifications only w
 ### Filtering & Notifications
 
 * Each channel can be associated with a regex filter
-* Notification rules:
+* Notification rules (user will select one of them):
 
   * Notify when the video title **matches** the regex
   * Notify when the video title **does not match** the regex
@@ -145,4 +145,5 @@ See the [LICENSE](LICENCE) file for details.
 ## Credits
 
 <a href="https://www.flaticon.com/free-icons/paper" title="paper icons">Paper icons created by Pixel perfect - Flaticon</a>
+
 
